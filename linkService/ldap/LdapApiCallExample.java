@@ -1,4 +1,4 @@
-package linkService.apiCallExample;
+package linkService.ldap;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,8 +7,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class ApiCallExample {
-
+public class LdapApiCallExample {
     public void apiCall() throws URISyntaxException, IOException, InterruptedException {
 
         // HttpClient 생성
@@ -16,8 +15,8 @@ public class ApiCallExample {
 
         //HttpRequest 생성
         HttpRequest request = HttpRequest.newBuilder()
-                //ex) 행정표준코드 API 요청 URI 예시 -> "혈액형" 코드 정보 API 호출
-                .uri(new URI("https://saas.go.kr/api/gscs/data/blood"))
+                //ex) LDAP API 요청 URI 예시 -> 행정안전부의 하위 조직도 정보 API 호출
+                .uri(new URI("https://saas.go.kr/api/ldls/orgchart/1741000"))
                 .header("Content-Type","application/json")
 
                 /* 아래의 LinkSrvcId, ApiKey 의 value 에 발급받은 연계서비스ID 및 복호화키를 setting 하여 Main 실행
