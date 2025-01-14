@@ -26,8 +26,8 @@ public class CodeApiCallExample {
                  * 실제키 - 테스트키 인증 성공 이후 실제키로 API 호출 시, 실데이터를 json 형태로 반환
                  *
                  */
-                .setHeader("LinkSrvcId", "your-LinkSrvcId")
-                .setHeader("ApiKey", "your-ApiKey")
+                .setHeader("LinkSrvcId", "your-LinkSrvcId (연계서비스ID)")
+                .setHeader("ApiKey", "your-ApiKey (복호화 Key)")
                 .build();
 
         // 요청을 보내고 응답을 받음

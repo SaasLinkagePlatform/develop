@@ -19,12 +19,12 @@ public class Main {
      */
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
         //행정표준코드
-//        CodeApiCallExample code = new CodeApiCallExample();
-//        code.apiCall();
-//
-//        //LDAP
-//        LdapApiCallExample ldap = new LdapApiCallExample();
-//        ldap.apiCall();
+        CodeApiCallExample code = new CodeApiCallExample();
+        code.apiCall();
+
+        //LDAP
+        LdapApiCallExample ldap = new LdapApiCallExample();
+        ldap.apiCall();
 
         //모바일공무원인증
         MobileApiCallExample mobile = new MobileApiCallExample();
