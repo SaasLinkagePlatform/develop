@@ -1,5 +1,7 @@
 ## LDAP
 
+###  ** 민간 SaaS의 LDAP 연계 개발 단계 이전 [허용데이터 관리](https://github.com/privateSaasOperationSupportCenter/docs/blob/main/2.%20API%20key%20%EB%B0%9C%EA%B8%89%20%EB%B0%8F%20%EC%82%AC%EC%9A%A9.md#5-ldap-%ED%97%88%EC%9A%A9%EB%8D%B0%EC%9D%B4%ED%84%B0-%EA%B4%80%EB%A6%AC-ldap%EB%A5%BC-%EC%97%B0%EA%B3%84%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0%EC%97%90%EB%A7%8C-%ED%95%B4%EB%8B%B9) 를 확인 바랍니다.
+
 | 요청 URL                                | 메서드 | 응답 형식 | 설명                                                                 |
 |-----------------------------------------|--------|-----------|----------------------------------------------------------------------|
 | /api/ldls/userinfo                      | GET    | JSON      | 사용자가 속한 전체 조직명, 성명, 직급, 직위를 제공하는 API (단건 조회)  |
@@ -9,6 +11,7 @@
 | /api/ldls/fullorgchart/{inst_code}      | GET    | JSON      | 기관 코드의 차수 및 서열과 관계없이, 파라미터로 전달한 해당 기관코드의 전체조직도(fullorgchart)를 response하는 API (직원정보 미포함) |
 | /api/ldls/fullorgchart/{inst_code}/{depth} | GET    | JSON      | 기관 코드의 차수 및 서열과 관련하여, 파라미터로 해당 기관 코드를 전달했을 때 함께 전달하는 파라미터의 차수(depth)만큼 전체 조직도(fullorgchart)를 response하는 API (직원정보 미포함) |
 | /api/ldls/which-inst                    | GET    | JSON      | 기관 코드 중 차상위기관 코드의 값이 0이고 차수가 1인 최상위기관의 목록을 추출하여 반환하는 API |
+
 
 ---
 ### (1) 사용자 정보 제공 API
