@@ -17,6 +17,6 @@
 
 ### (3) [행정표준코드](https://github.com/privateSaasOperationSupportCenter/develop/blob/main/linkService/code/code.md)
 
-### (4) [GPKI](https://github.com/privateSaasOperationSupportCenter/develop/blob/main/linkService/gpki/gpki.md) (추후 추가 예정)
+### (4) [GPKI](https://github.com/privateSaasOperationSupportCenter/develop/blob/main/linkService/gpki/gpki.md) 
 
 ### (5) [주요오류코드](https://github.com/privateSaasOperationSupportCenter/develop/blob/main/linkService/other/%EC%A3%BC%EC%9A%94%20%EC%98%A4%EB%A5%98%20%EC%BD%94%EB%93%9C.md)

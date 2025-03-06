@@ -1,9 +1,7 @@
 package linkService;
 
 import linkService.code.CodeApiCallExample;
-import linkService.gpki.GpkiApiCallExample;
 import linkService.ldap.LdapApiCallExample;
-import linkService.mobile.MobileApiCallExample;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,12 +24,6 @@ public class Main {
         LdapApiCallExample ldap = new LdapApiCallExample();
         ldap.apiCall();
 
-        //모바일공무원인증
-        MobileApiCallExample mobile = new MobileApiCallExample();
-        mobile.apiCall();
-
-        //GPKI
-        GpkiApiCallExample gpki = new GpkiApiCallExample();
-        gpki.apiCall();
+        /* 모바일공무원인증, GPKI - .md 및 샘플 프로젝트 소스코드 참고 */
     }
 }
