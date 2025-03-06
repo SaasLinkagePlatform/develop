@@ -1,21 +1,21 @@
-# GPKI 연계 SaaS 
+## GPKI 연계 SaaS 
 
-## 개요
+### 개요
 
 GPKI 연계 SaaS는 중앙 및 지방 행정 기관에 종사하는 공직자들이 민간 SaaS에 로그인 시, <br/>
 GPKI 인증서를 통해 로그인을 할 수 있도록 인증서 검증을 연계하는 서비스입니다.
 
-GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스가 되고 있습니다.
+GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습니다.
 
 - 개발 서버 : https://www.saas.go.kr/gpki-stg 
 - 운영 서버 : https://www.saas.go.kr/gpki
 
 
 - 테스트 인증서가 따로 존재하지 않기 때문에, 개발 서버에서는 아래 두 가지 방식의 로그인 제공합니다.
-  - 인증서 없는 로그인 : 인증서 검증 건너뛰고 임의의 사용자 정보로 로그인 수행
-  - 실인증서 로그인 : 발급받아서 사용 중인 실제 인증서를 첨부하고, 해당 인증서의 사용자 정보로 로그인 수행
+  - 인증서 없는 로그인 : 인증서 검증을 건너뛰고 임의의 사용자 정보로 로그인 수행
+  - 실인증서 로그인 : 실제 인증서를 첨부하고, 해당 인증서의 사용자 정보로 로그인 수행
 
-## API 목록
+### API 목록
 
 | 요청 URL            | 메서드  | 응답 형식        | 설명                                            |
 |-------------------|------|--------------|-----------------------------------------------|
@@ -34,12 +34,13 @@ GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스가 되고 �
 
 - redirect_uri, post_logout_redirect_uri은 통합관리포털에서 이용 신청 시 입력합니다.
 
-- redirect_uri : GPKI 연계 SaaS에게 인가 코드를 요청하고 리다이렉트되는 민간 SaaS의 서비스 URL
+- redirect_uri : GPKI 연계 SaaS에게 인가 코드를 요청하고 리다이렉트되는 민간 SaaS의 서비스 URI
 
-- post_logout_redirect_uri : 로그아웃 후 리다이렉트되는 민간 SaaS의 서비스 URL
+- post_logout_redirect_uri : 로그아웃 후 리다이렉트되는 민간 SaaS의 서비스 URI
 ```
 
 ***[에러코드](#에러-코드)는 문서 최하단에 있습니다**
+
 
 ### (1) 로그인
 #### 가. 인가 코드 요청
@@ -55,7 +56,7 @@ GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스가 되고 �
 | redirect_uri  | String | 인가 코드를 전달받을 서비스 서버의 URI<br/> - 서비스 신청 시 입력한 redirect_uri<br/>       | ex) http://testsaas.com/oauth/callback |
 | response_type | String | code로 고정                                                            | 고정값                                    |
 | scope         | String | openid로 고정                                                          | 고정값                                    |
-| state         | String | 임의의 문자열(정해진 형식 없음)                                                  |                                        |
+| state         | String | 임의의 문자열 (정해진 형식 없음)                                                 |                                        |
 
 #### 응답
 &nbsp;&nbsp; 쿼리 파라미터
@@ -79,7 +80,7 @@ Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 ```
 
 &nbsp;&nbsp; 실패
-```json
+```
 (1) 등록된 클라이언트 ID가 없을 때
 
 {
@@ -173,7 +174,7 @@ Content-Type: application/json
 ```
 ---
 ### (2) 사용자 정보 조회
-로그인한 사용자의 정보를 Access Token으로 조회할 수 있다.
+로그인한 사용자의 정보를 Access Token으로 조회할 수 있습니다.
 
 - 요청 방식 : GET
 - 요청 URI : /userinfo
@@ -288,10 +289,10 @@ Content-Type: application/json
 #### 요청
 &nbsp;&nbsp; 쿼리 파라미터
 
-| 항목                       | 설명                                               | 비고(예시) |
-|--------------------------|--------------------------------------------------|--------|
-| id_token_hint            | 토큰 발급 시 함께 전달 받은 ID_TOKEN 값                      | -      |
-| post_logout_redirect_uri | 이용 신청 때 민간 SaaS에서 지정한 post_logout_redirect_uri 값 | -      |
+| 항목                       | 설명                                               | 비고(예시)                  |
+|--------------------------|--------------------------------------------------|-------------------------|
+| id_token_hint            | 토큰 발급 시 함께 전달 받은 ID_TOKEN 값                      | -                       |
+| post_logout_redirect_uri | 이용 신청 때 민간 SaaS에서 지정한 post_logout_redirect_uri 값 | ex) http://testsaas.com |
 
 #### 응답
 - 민간 SaaS에서 지정한 ${POST_LOGOUT_REDIRECT_URI} 로 리다이렉트
@@ -299,7 +300,7 @@ Content-Type: application/json
 #### 호출 예시
 ###### 요청
 ```sybase
-https://www.saas.go.kr/gpki/connect/logout?id_token_hint=${연계서비스ID}&post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
+https://www.saas.go.kr/gpki/connect/logout?id_token_hint=${ID_TOKEN}&post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
 ```  
 ###### 응답
 ```sybase
