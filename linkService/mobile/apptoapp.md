@@ -1,5 +1,5 @@
 ## 모바일공무원인증 - App To App 가이드
-- 모바일 공무원증 App to App 가이드는 Mobile Web Brower에서 모바일 공무원증 Application 호출하는 방법만 안내합니다.
+- 모바일 공무원증 App to App 가이드는 Mobile Web Browser에서 모바일 공무원증 Application 호출하는 방법만 안내합니다.
 - 이용기관에서는 적용하는 정책(지원하는 디바이스, 지원하는 브라우저 등)에 따라서 모바일 Web To App을 적용하여 주시기 바랍니다.
 - CSS, javascript, Angular, React, Vue.js 등의 browser에서 발생하는 오류는 기술 지원해드릴 수 없음을 알려드립니다.
 
@@ -16,6 +16,7 @@
 | /oauth2/connect/logout        | GET  | JSON      | 로그인 한 사용자의 토큰을 만료시키는 API                      |
 | /auth/spnoneprofile/mbTxCheck | POST | JSON      | 검증 완료 여부를 확인 요청하는 API                         |
 | /auth/login                   | POST | JSON      | 검증 완료된 사용자의 로그인 확인 여부를 요청하는 API               |
+
 ※ authorize, mbTxCheck, login 을 제외한 API는 모바일 공무원증 파일을 확인하시기 바랍니다.
 
 ### (1) Authorization Code 요청
@@ -31,6 +32,7 @@
 | nonce                | 랜덤 문자열           |                                    |
 | codeChallenge        | 랜덤 문자열           | codeVerifier 변환 값                  |
 | codeChallengeMethod  | S256             | 고정값                                |
+
 ** 고정값: 문자 그대로 입력(ex: code, openid, S256)
 
 - 요청 예시
@@ -76,7 +78,7 @@
 | Client App에서 사용할 Action 값 | kr.go.id.bmc.VERIFY_VP |
 
 ### 2.2 Client App 과 Host App 간의 SequenceDiagram
-![img.png](img.png)
+![apptoapp_android_diagram.png](../../image/mobile/apptoapp_android_diagram.png)
 
 ### 2.3 App to App 연동 Flow
 #### 2.3.1 로그인 요청 응답 받은 결과 값을 사전 정의된 Scheme를 통해 Host App으로 전달
@@ -157,7 +159,7 @@ ActivityResultCallback<ActivityResult> activityResultCallback = new ActivityResu
   canOpenURL을 호출하지 않고 바로 openURL을 사용하여도 무방합니다.
 
 ### 3.2 Client App과 Host App 간의 SequenceDiagram
-![img_1.png](img_1.png)
+![apptoapp_ios_diagram.png](../../image/mobile/apptoapp_ios_diagram.png)
 
 ### 3.3 App to App 연동 Flow
 #### 3.3.1 로그인 요청 응답 받은 결과 값을 사전 정의된 Scheme를 통해 Host App으로 전달
