@@ -355,7 +355,7 @@ response 한다.
 | /api/ldls-change/detail/top               | GET | JSON  | 하위기관에 속한 사용자 정보까지 포함하여 변경 상세 데이터 조회                     
 
 ### ` * 위 4개의 변경 데이터 조회 API의 경우 2025년 3월 5일 이후에 변경된 데이터부터 추적이 가능합니다.`
-
+### ` * 변경 데이터 조회 시 조회한 날짜와 조회 날짜의 작일에 대한 변경 데이터가 조회 됩니다.`
 
 #### 가. 기관코드로 조회
 
@@ -378,22 +378,23 @@ response 한다.
 ```
 - 응답 항목
 
-| 이름                | 비고                                   |
-|-------------------|--------------------------------------|
-| name              | 이름                                   |
-| email             | 이메일                                  |
-| phoneNumber       | 휴대전화번호                               |
-| fullName          | 전체조직명직원명                             |
-| grade             | 직급                                   |
-| position          | 직위                                   |
-| instNameAll       | 상위기관포함 전체조직명                         |
-| instName          | 소속기관명                                |
-| topInstCode       | 최상위기관코드                              |
-| instCode          | 기관코드                                 |
-| secondaryCode     | 차상위기관코드                              |
-| odr               | 차수                                   |
-| secondaryOdr      | 차상위기관내조직서열                           |
-| status            | 변경상태<br/> 신규: INS, 업데이트: UPD, 삭제 : DEL |
+| 이름            | 비고                                     |
+|---------------|----------------------------------------|
+| cn            | 사용자 식별값                                 |
+| name          | 이름                                     |
+| email         | 이메일                                    |
+| phoneNumber   | 휴대전화번호                                 |
+| fullName      | 전체조직명직원명                               |
+| grade         | 직급                                     |
+| position      | 직위                                     |
+| instNameAll   | 상위기관포함 전체조직명                           |
+| instName      | 소속기관명                                  |
+| topInstCode   | 최상위기관코드                                |
+| instCode      | 기관코드                                   |
+| secondaryCode | 차상위기관코드                                |
+| odr           | 차수                                     |
+| secondaryOdr  | 차상위기관내조직서열                             |
+| status        | 변경상태<br/> 신규: INS, 업데이트: UPD, 삭제 : DEL |
 
 
 #### 나. 최상위기관코드로 조회
@@ -420,6 +421,7 @@ response 한다.
 
 | 이름                | 비고                                   |
 |-------------------|--------------------------------------|
+| cn            | 사용자 식별값                                 |
 | name              | 이름                                   |
 | email             | 이메일                                  |
 | phoneNumber       | 휴대전화번호                               |
@@ -460,6 +462,7 @@ response 한다.
 |--------------|---------|
 | topInstCode  | 최상위기관코드 |
 | instCode     | 기관코드    |
+| cn            | 사용자 식별값 |
 | name         | 이름      |
 | field        | 변경항목    |
 | previousValue | 이전값     |
@@ -491,6 +494,7 @@ response 한다.
 |--------------|---------|
 | topInstCode  | 최상위기관코드 |
 | instCode     | 기관코드    |
+| cn            | 사용자 식별값 |
 | name         | 이름      |
 | field        | 변경항목    |
 | previousValue | 이전값     |
