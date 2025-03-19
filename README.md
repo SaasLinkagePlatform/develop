@@ -1,4 +1,4 @@
-# 1. `docs` 민간 SaaS 이용가이드
+# 1. `docs` 민간 SaaS 연계공통기반 이용 가이드
 ### (1) [서비스신청](https://github.com/privateSaasOperationSupportCenter/docs/blob/main/1.%20%EC%84%9C%EB%B9%84%EC%8A%A4%EC%8B%A0%EC%B2%AD.md)
 
 ### (2) [API key 발급 및 사용](https://github.com/privateSaasOperationSupportCenter/docs/blob/main/2.%20API%20key%20%EB%B0%9C%EA%B8%89%20%EB%B0%8F%20%EC%82%AC%EC%9A%A9.md)
