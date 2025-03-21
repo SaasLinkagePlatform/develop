@@ -7,8 +7,8 @@ GPKI 인증서를 통해 로그인을 할 수 있도록 인증서 검증을 연�
 
 GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습니다.
 
-- 개발 서버 : https://www.saas.go.kr/gpki-stg 
-- 운영 서버 : https://www.saas.go.kr/gpki
+- 개발 서버 : https://saas.go.kr/gpki-stg 
+- 운영 서버 : https://saas.go.kr/gpki
 
 
 - 테스트 인증서가 따로 존재하지 않기 때문에, 개발 서버에서는 아래 두 가지 방식의 로그인을 제공합니다.
@@ -73,7 +73,7 @@ GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습
 #### 호출 예시
 ###### 요청
 ```sybase
-https://www.saas.go.kr/gpki/oauth2/authorize?client_id=${연계서비스ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=openid&state=${STATE}
+https://saas.go.kr/gpki/oauth2/authorize?client_id=${연계서비스ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=openid&state=${STATE}
 ```  
 ###### 응답
 &nbsp;&nbsp; 성공
@@ -304,7 +304,7 @@ Content-Type: application/json
 #### 호출 예시
 ###### 요청
 ```sybase
-https://www.saas.go.kr/gpki/connect/logout?id_token_hint=${ID_TOKEN}&post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
+https://saas.go.kr/gpki/connect/logout?id_token_hint=${ID_TOKEN}&post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
 ```  
 ###### 응답
 ```sybase
