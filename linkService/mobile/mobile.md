@@ -36,6 +36,7 @@
 
 ** 고정값: 문자 그대로 입력(ex: code, openid)
 
+** redirect_uri는 통합관리포털에서 이용신청 시 입력하며, 이후 운영 메뉴([운영관리 > 연계서비스])에서 수정 및 추가 가능합니다.
 ```
   <요청 URI 예시>
   https://www.saas.go.kr/auth/oauth2/authorize? \\
@@ -98,7 +99,6 @@
 | code          | 발급 받은 code         | 토큰 연장 할 땐 사용 안 함 (ex: sMTesyQ8…FNcQnqji28qG4n)                                              |
 | code_verifier | 랜덤 문자열             | App to App 요청 시 사용                                                                          |
 ** 고정값: 문자 그대로 입력(ex: authorization_code)
-
 
 - 응답 항목
 
