@@ -26,7 +26,7 @@ GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습
 | /oauth2/authorize | GET  | Redirect URI | 연계 SaaS에 인가 코드를 요청하는 API                      |
 | /oauth2/token     | POST | JSON         | 연계 SaaS에 Access Token/Refresh Token을 요청하는 API |
 | /userinfo         | GET  | JSON         | 로그인 한 사용자의 정보를 요청하는 API                       |
-| /connect/logout   | GET  | Redirect URI | 로그인 한 사용자의 토큰을 만료시키고 세션 정보를 삭제하는 API          |
+| /connect/logout   | GET  | Redirect URI | 로그인 한 사용자의 세션을 만료시키는 API                      |
 
 ### 주요 파라미터 설명
 ```
