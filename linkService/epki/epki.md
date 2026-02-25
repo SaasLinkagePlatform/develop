@@ -9,17 +9,17 @@ EPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습
 - 개발 서버: <https://saas.go.kr/epki-stg>
 - 운영 서버: <https://saas.go.kr/epki>
 - 테스트 인증서가 따로 존재하지 않기 때문에, 개발 서버에서는 아래 두 가지 방식의 로그인을 제공합니다.
-    - 인증서 없는 로그인 : 인증서 검증을 건너뛰고 임의의 사용자 정보로 로그인 수행
-    - 실인증서 로그인 : 실제 인증서를 첨부하고, 해당 인증서의 사용자 정보로 로그인 수행
+  - 인증서 없는 로그인 : 인증서 검증을 건너뛰고 임의의 사용자 정보로 로그인 수행
+  - 실인증서 로그인 : 실제 인증서를 첨부하고, 해당 인증서의 사용자 정보로 로그인 수행
 
 ### API 목록
 
-| 요청 URL              | 메서드  | 응답 형식        | 설명                                            |
-|---------------------|------|--------------|-----------------------------------------------|
-| `/oauth2/authorize` | GET  | Redirect URI | 연계 SaaS에 인가 코드를 요청하는 API                      |
-| `/oauth2/token`     | POST | JSON         | 연계 SaaS에 Access Token/Refresh Token을 요청하는 API |
-| `/userinfo`         | GET  | JSON         | 로그인 한 사용자의 정보를 요청하는 API                       |
-| `/connect/logout`   | GET  | Redirect URI | 로그인 한 사용자의 세션을 만료시키는 API                      |
+| 요청 URL | 메서드 | 응답 형식 | 설명 |
+| --- | --- | --- | --- |
+| `/oauth2/authorize` | GET | Redirect URI | 연계 SaaS에 인가 코드를 요청하는 API |
+| `/oauth2/token` | POST | JSON | 연계 SaaS에 Access Token/Refresh Token을 요청하는 API |
+| `/userinfo` | GET | JSON | 로그인 한 사용자의 정보를 요청하는 API |
+| `/connect/logout` | GET | Redirect URI | 로그인 한 사용자의 세션을 만료시키는 API |
 
 ### 주요 파라미터 설명
 
@@ -52,28 +52,28 @@ EPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습
 
 쿼리 파라미터:
 
-| 항목            | 타입     | 설명                                                                   | 비고(예시)                                 |
-|---------------|--------|----------------------------------------------------------------------|----------------------------------------|
-| client_id     | String | 연계 서비스 ID<br/> - 서비스 신청 후 발급받는 서비스ID<br/>- [운영관리] > [연계서비스] 에서 확인 가능 | ex) LKSV2099010119000196               |
-| redirect_uri  | String | 인가 코드 수신 URI<br/> - 서비스 신청 시 입력한 redirect_uri<br/>                   | ex) http://testsaas.com/oauth/callback |
-| response_type | String | `code` 고정                                                            | -                                      |
-| scope         | String | `openid` 고정                                                          | -                                      |
-| state         | String | 임의 문자열 (정해진 형식 없음)                                                   | -                                      |
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| client_id | String | 연계 서비스 ID<br/> - 서비스 신청 후 발급받는 서비스ID<br/>- [운영관리] > [연계서비스] 에서 확인 가능 | ex) LKSV2099010119000196 |
+| redirect_uri | String | 인가 코드 수신 URI<br/> - 서비스 신청 시 입력한 redirect_uri<br/> | ex) http://testsaas.com/oauth/callback |
+| response_type | String | `code` 고정 | - |
+| scope | String | `openid` 고정 | - |
+| state | String | 임의 문자열 (정해진 형식 없음) | - |
 
 #### 응답
 
 쿼리 파라미터:
 
-| 항목    | 타입     | 설명                      | 비고(예시) |
-|-------|--------|-------------------------|--------|
-| code  | String | 토큰 요청 시 필요한 인가 코드       | -      |
-| state | String | 요청 시 전달한 state 값과 동일한 값 | -      |
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| code | String | 토큰 요청 시 필요한 인가 코드 | - |
+| state | String | 요청 시 전달한 state 값과 동일한 값 | - |
 
 #### 호출 예시
 
 요청:
 
-```http
+```text
 GET https://www.saas.go.kr/epki/oauth2/authorize? \
 client_id=${연계서비스ID} \
 &redirect_uri=${REDIRECT_URI} \
@@ -91,18 +91,20 @@ HTTP/1.1 302
 Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 ```
 
-- 실패
+- 실패 (등록된 클라이언트 ID가 없음)
 
 ```json
-(1) 등록된 클라이언트 ID가 없을 때
 {
   "traceId": "9b7396b60cf7894a",
   "code": "EA10004",
   "message": "등록된 Client ID가 없습니다",
   "status": "404 NOT_FOUND"
 }
+```
 
-(2) 요청 파라미터 값이 부정확할 때
+- 실패 (요청 파라미터 값이 부정확)
+
+```json
 {
   "traceId": "57535d1f3a5089c4",
   "code": "EA20003",
@@ -120,19 +122,19 @@ Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 
 헤더:
 
-| 항목           | 설명                                | 비고(예시) |
-|--------------|-----------------------------------|--------|
-| Content-Type | application/x-www-form-urlencoded | -      |
+| 항목 | 설명 | 비고(예시) |
+| --- | --- | --- |
+| Content-Type | application/x-www-form-urlencoded | - |
 
 본문:
 
-| 항목            | 타입     | 설명                                                                   | 비고(예시)                                 |
-|---------------|--------|----------------------------------------------------------------------|----------------------------------------|
-| grant_type    | String | `authorization_code` 고정                                              | -                                      |
-| client_id     | String | 연계 서비스 ID<br/> - 서비스 신청 후 발급받는 서비스ID<br/>- [운영관리] > [연계서비스] 에서 확인 가능 | ex) LKSV2099010119000196               |
-| client_secret | String | API Key  <br/>- [운영관리] > [연계서비스] 에서 확인 가능                            | -                                      |
-| redirect_uri  | String | 인가 코드 요청 시 사용한 URI                                                   | ex) http://testsaas.com/oauth/callback |
-| code          | String | `/oauth2/authorize` 에서 발급받은 인가 코드                                    | -                                      |
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| grant_type | String | `authorization_code` 고정 | - |
+| client_id | String | 연계 서비스 ID<br/> - 서비스 신청 후 발급받는 서비스ID<br/>- [운영관리] > [연계서비스] 에서 확인 가능 | ex) LKSV2099010119000196 |
+| client_secret | String | API Key  <br/>- [운영관리] > [연계서비스] 에서 확인 가능 | - |
+| redirect_uri | String | 인가 코드 요청 시 사용한 URI | ex) http://testsaas.com/oauth/callback |
+| code | String | `/oauth2/authorize` 에서 발급받은 인가 코드 | - |
 
 #### 응답
 
@@ -165,20 +167,20 @@ curl -X POST "https://saas.go.kr/epki/oauth2/token" \
 
 - 성공
 
-```json
+```text
 HTTP/1.1 200
 Content-Type: application/json
 {
-"access_token": "${ACCESS_TOKEN}",
-"refresh_token": "${REFRESH_TOKEN}",
-"scope": "openid",
-"id_token": "${ID_TOKEN}",
-"token_type": "Bearer",
-"expires_in": 3599
+  "access_token": "${ACCESS_TOKEN}",
+  "refresh_token": "${REFRESH_TOKEN}",
+  "scope": "openid",
+  "id_token": "${ID_TOKEN}",
+  "token_type": "Bearer",
+  "expires_in": 3599
 }
 ```
 
-- 실패 (요청 파라미터 값이 부정확할 때):
+- 실패 (요청 파라미터 값이 부정확할 때)
 
 ```json
 {
@@ -202,9 +204,9 @@ Content-Type: application/json
 
 헤더:
 
-| 항목            | 설명                     | 비고(예시) |
-|---------------|------------------------|--------|
-| Authorization | Bearer ${ACCESS_TOKEN} | -      |
+| 항목 | 설명 | 비고(예시) |
+| ------------- | ---------------------- | ------ |
+| Authorization | Bearer ${ACCESS_TOKEN} | - |
 
 #### 응답
 
@@ -228,17 +230,19 @@ curl -X GET "https://saas.go.kr/epki/userinfo" \
 
 응답:
 
-```json
+- 성공
+
+```text
 HTTP/1.1 200
 Content-Type: application/json
 {
-"name": "테스트 이름",
-"cn": "테스트 CN",
-"instCode": "테스트 기관코드"
+  "name": "테스트 이름",
+  "cn": "테스트 CN",
+  "instCode": "테스트 기관코드"
 }
 ```
 
-실패 (유효하지 않은 토큰):
+- 실패 (유효하지 않은 토큰)
 
 ```json
 {
@@ -262,9 +266,9 @@ Content-Type: application/json
 
 헤더:
 
-| 항목           | 설명                                | 비고(예시) |
-|--------------|-----------------------------------|--------|
-| Content-Type | application/x-www-form-urlencoded | -      |
+| 항목 | 설명 | 비고(예시) |
+| --- | --- | --- |
+| Content-Type | application/x-www-form-urlencoded | - |
 
 본문:
 
@@ -288,6 +292,7 @@ Content-Type: application/json
 | token_type    | String  | Bearer으로 고정                 | 고정값    |
 | expires_in    | Integer | 3600 (Access Token 유효기간(s)) | -      |
 
+
 #### 호출 예시
 
 요청:
@@ -305,20 +310,20 @@ curl -X POST "https://saas.go.kr/epki/oauth2/token" \
 
 - 성공
 
-```json
+```text
 HTTP/1.1 200
 Content-Type: application/json
 {
-"access_token": "${ACCESS_TOKEN}",
-"refresh_token": "${NEW_REFRESH_TOKEN}",
-"scope": "openid",
-"id_token": "${ID_TOKEN}",
-"token_type": "Bearer",
-"expires_in": 3599
+  "access_token": "${ACCESS_TOKEN}",
+  "refresh_token": "${NEW_REFRESH_TOKEN}",
+  "scope": "openid",
+  "id_token": "${ID_TOKEN}",
+  "token_type": "Bearer",
+  "expires_in": 3599
 }
 ```
 
-- 실패 (요청 파라미터 값이 부정확):
+- 실패 (요청 파라미터 값이 부정확)
 
 ```json
 {
@@ -353,7 +358,7 @@ Content-Type: application/json
 
 요청:
 
-```http
+```text
 https://saas.go.kr/epki/connect/logout?
 id_token_hint=${ID_TOKEN}&
 post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
@@ -361,26 +366,26 @@ post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
 
 응답:
 
-```json
+```text
 HTTP/1.1 302
 Location: ${POST_LOGOUT_REDIRECT_URI}
 ```
 
 ## 에러 코드
 
-| 코드      | 에러 메시지                    | 상태코드 |
-|---------|---------------------------|------|
-| EA10001 | 시스템 할당로직 통신이 원활하지 않습니다    | 500  |
-| EA10002 | 잘못된 요청입니다                 | 400  |
-| EA10003 | 요청하신 데이터가 없습니다            | 404  |
-| EA10004 | 등록된 Client ID가 없습니다       | 404  |
-| EA10005 | 지원하지 않는 방식입니다             | 405  |
-| EA20001 | 인증되지 않았습니다                | 401  |
-| EA20002 | 접근 권한이 없습니다               | 403  |
-| EA20003 | 요청의 필수 항목 또는 값이 잘못되었습니다   | 400  |
-| EA20004 | OAuth2 인증 흐름을 통한 접근이 아닙니다 | 401  |
-| EA30001 | 잘못된 토큰 형식입니다              | 400  |
-| EA30002 | 유효하지 않은 토큰입니다             | 401  |
-| EA30003 | 만료된 API키입니다               | 401  |
-| EA30004 | 이용 상태를 확인하세요              | 401  |
-| EA30005 | 테스트 키로 운영환경 이용은 불가합니다     | 401  |
+| 코드 | 에러 메시지 | 상태코드 |
+| --- | --- | --- |
+| EA10001 | 시스템 할당로직 통신이 원활하지 않습니다 | 500 |
+| EA10002 | 잘못된 요청입니다 | 400 |
+| EA10003 | 요청하신 데이터가 없습니다 | 404 |
+| EA10004 | 등록된 Client ID가 없습니다 | 404 |
+| EA10005 | 지원하지 않는 방식입니다 | 405 |
+| EA20001 | 인증되지 않았습니다 | 401 |
+| EA20002 | 접근 권한이 없습니다 | 403 |
+| EA20003 | 요청의 필수 항목 또는 값이 잘못되었습니다 | 400 |
+| EA20004 | OAuth2 인증 흐름을 통한 접근이 아닙니다 | 401 |
+| EA30001 | 잘못된 토큰 형식입니다 | 400 |
+| EA30002 | 유효하지 않은 토큰입니다 | 401 |
+| EA30003 | 만료된 API키입니다 | 401 |
+| EA30004 | 이용 상태를 확인하세요 | 401 |
+| EA30005 | 테스트 키로 운영환경 이용은 불가합니다 | 401 |
