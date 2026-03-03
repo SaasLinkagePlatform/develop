@@ -62,7 +62,7 @@ EPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습
 | response_type | String | `code` 고정 | - |
 | scope | String | `openid` 고정 | - |
 | state | String | 임의 문자열 (정해진 형식 없음) | - |
-
+** redirect_uri는 통합관리포털에서 이용신청 시 입력하며, 이후 운영 메뉴([운영관리 > 연계서비스])에서 수정 및 추가 가능합니다.
 #### 응답
 
 쿼리 파라미터:
@@ -212,6 +212,8 @@ Content-Type: application/json
 | Authorization | Bearer ${ACCESS_TOKEN} | - |
 
 #### 응답
+
+본문:
 
 | 항목       | 타입     | 설명               | 비고(예시)              |
 |----------|--------|------------------|---------------------|
@@ -379,7 +381,7 @@ post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
 HTTP/1.1 302
 Location: ${POST_LOGOUT_REDIRECT_URI}
 ```
-
+---
 ## 에러 코드
 
 | 코드 | 에러 메시지 | 상태코드 |
