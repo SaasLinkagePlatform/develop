@@ -454,7 +454,7 @@ response 한다.
 
 ```
   <요청 URI 예시>
-  https://saas.go.kr/api/ldls-change
+  https://saas.go.kr/api/ldls-change/detail
 ```
 - 응답 항목
 
@@ -485,7 +485,7 @@ response 한다.
 
 ```
   <요청 URI 예시>
-  https://saas.go.kr/api/ldls-change/top
+  https://saas.go.kr/api/ldls-change/detail/top
 ```
 
 - 응답 항목
