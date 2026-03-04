@@ -97,7 +97,7 @@ Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 ```json
 {
   "traceId": "9b7396b60cf7894a",
-  "code": "EA10004",
+  "code": "GA10004",
   "message": "등록된 Client ID가 없습니다",
   "status": "404 NOT_FOUND"
 }
@@ -108,7 +108,7 @@ Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 ```json
 {
   "traceId": "57535d1f3a5089c4",
-  "code": "EA20003",
+  "code": "GA20003",
   "message": "요청에 필요한 항목이나 값이 잘못되었습니다",
   "status": "400 BAD_REQUEST"
 }
@@ -185,7 +185,7 @@ Content-Type: application/json
 ```json
 {
   "traceId": "57535d1f3a5089c4",
-  "code": "EA20003",
+  "code": "GA20003",
   "message": "요청에 필요한 항목이나 값이 잘못되었습니다",
   "status": "400 BAD_REQUEST"
 }
@@ -325,7 +325,7 @@ Content-Type: application/json
 ```json
 {
   "traceId": "57535d1f3a5089c4",
-  "code": "EA20003",
+  "code": "GA20003",
   "message": "요청에 필요한 항목이나 값이 잘못되었습니다",
   "status": "400 BAD_REQUEST"
 }
