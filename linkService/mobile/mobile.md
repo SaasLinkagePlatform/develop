@@ -1,40 +1,40 @@
 ## 모바일공무원인증
 - 브라우저에 민간SaaS 로그인이 되어 있으면, 다른 민간SaaS에서는 로그인 불필요. (단, 동일 브라우저 내 탭에서만 가능)
-- 개발용 서버 : https://www.saas.go.kr/auth-stg (테스트 공무원증이 있거나, 개발할 때 사용)
-- 운영용 서버 : https://www.saas.go.kr/auth (테스트 공무원증 사용 불가)
+- 개발용 서버: https://www.saas.go.kr/auth-stg (테스트 공무원증이 있거나, 개발할 때 사용)
+- 운영용 서버: https://www.saas.go.kr/auth (테스트 공무원증 사용 불가)
 
 
-## 모바일공무원인증 API 목록
+### API 목록
 
 | 요청 URL                 | 메서드  | 응답 형식 | 설명                                            |
 |------------------------|------|-----------|-----------------------------------------------|
-| /oauth2/authorize      | GET  | JSON      | 연계 SaaS에게 권한 인증을 요청하는 API                     |
-| /oauth2/token          | POST | JSON      | 연계 SaaS에 Access Token/Refresh Token을 요청하는 API |
-| /oauth2/userinfo       | GET  | JSON      | 로그인 한 사용자의 정보를 요청하는 API                       |
-| /oauth2/connect/logout | GET  | JSON      | 로그인 한 사용자의 토큰을 만료시키는 API                      |
-| /mobile/txCheck        | POST | JSON      | App to App 로그인 시 공무원증 검증 성공 여부를 결과를 요청하는 API  |
-| /login                 | POST | JSON      | App to App 로그인 요청을 보내는 API                    |
+| `/oauth2/authorize`      | GET  | JSON      | 연계 SaaS에게 권한 인증을 요청하는 API                     |
+| `/oauth2/token`          | POST | JSON      | 연계 SaaS에 Access Token/Refresh Token을 요청하는 API |
+| `/oauth2/userinfo`       | GET  | JSON      | 로그인 한 사용자의 정보를 요청하는 API                       |
+| `/oauth2/connect/logout` | GET  | JSON      | 로그인 한 사용자의 토큰을 만료시키는 API                      |
+| `/mobile/txCheck`        | POST | JSON      | App to App 로그인 시 공무원증 검증 성공 여부를 결과를 요청하는 API  |
+| `/login`                 | POST | JSON      | App to App 로그인 요청을 보내는 API                    |
 
 ***[에러코드](#에러-코드)는 문서 최하단에 있습니다**
 
 ---
 ### (1) 로그인
-#### 가. Authorization Code 요청
-- 요청 방식 : Redirection URI
-- 요청 URI : /oauth2/authorize
-- 요청 파라미터
+#### 가. 인가 코드 요청
+- 요청 방식: `GET`
+- 요청 URI: `/oauth2/authorize`
+- 쿼리 파라미터
 
-| 파라미터명                 | 입력값              | 비고(예시)                              |
-|-----------------------|------------------|-------------------------------------|
-| response_type         | code             | 고정값                                 |
-| scope                 | openid           | 고정값                                 |
-| client_id             | 지정한 client_id    | 연계서비스ID (ex: LKSV2099010119000196)  |
-| redirect_uri          | 지정한 redirect_uri | 민간SaaS.com/oauth/callback           |
-| state                 | 랜덤 문자열           |                                     |
-| nonce                 | 랜덤 문자열           |                                     |
-| web_login             | true/false       | App to App 인증의 경우에만 false(기본값:true) |
-| code_challenge        | 랜덤 문자열           | code_verifier의 해쉬 값                 |
-| code_challenge_method | S256             | 고정값                                 |
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| response_type | String | `code` | 고정값 |
+| scope | String | `openid` | 고정값 |
+| client_id | String | 지정한 client_id | 연계서비스ID (ex: LKSV2099010119000196) |
+| redirect_uri | String | 지정한 redirect_uri | ex) http://testsaas.com/oauth/callback |
+| state | String | 랜덤 문자열 | - |
+| nonce | String | 랜덤 문자열 | - |
+| web_login | String | true/false | App to App 인증의 경우에만 false(기본값:true) |
+| code_challenge | String | 랜덤 문자열 | code_verifier의 해쉬 값 |
+| code_challenge_method | String | `S256` | 고정값 |
 
 ** 고정값: 문자 그대로 입력(ex: code, openid)
 
@@ -88,30 +88,41 @@
 
 
 #### 나. Token 요청
-- 요청 방식 : POST
-- 요청 URI : /oauth2/token
-- 요청 파라미터
+- 요청 방식: `POST`
+- 요청 URI: `/oauth2/token`
 
-| 파라미터명         | 입력값                | 비고(예시)                                                                                      |
-|---------------|--------------------|---------------------------------------------------------------------------------------------|
-| grant_type    | authorization_code | 고정값                                                                                         |
-| client_id     | 지정한 client_id      | 연계서비스ID (ex: LKSV2099010119000196)                                                          |
-| client_secret | 지정한 client_secret  | API키 (ex: 2098801797380751aA6a7dUhHJw004sYsJhWA+0Ji0leU5nTq87Mx0PfsOiQDZezm3Qa+GVaanmhJQ82) |
-| redirect_uri  | 지정한 redirect_uri   | 민간SaaS.com/oauth/callback                                                                   |
-| code          | 발급 받은 code         | 토큰 연장 할 땐 사용 안 함 (ex: sMTesyQ8…FNcQnqji28qG4n)                                              |
-| code_verifier | 랜덤 문자열             | App to App 요청 시 사용                                                                          |
+#### 요청
+
+헤더:
+
+| 항목 | 설명 | 비고(예시) |
+| --- | --- | --- |
+| Content-Type | application/x-www-form-urlencoded | - |
+
+본문:                                                                         |
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| grant_type | String | `authorization_code` | 고정값 |
+| client_id | String | 지정한 client_id | 연계서비스ID (ex: LKSV2099010119000196) |
+| client_secret | String | 지정한 client_secret | API키 (ex: 2098801797380751aA6a7dUhHJw004sYsJhWA+0Ji0leU5nTq87Mx0PfsOiQDZezm3Qa+GVaanmhJQ82) |
+| redirect_uri | String | 지정한 redirect_uri | ex) http://testsaas.com/oauth/callback |
+| code | String | 발급 받은 code | 토큰 연장 할 땐 사용 안 함 (ex: sMTesyQ8…FNcQnqji28qG4n) |
+| code_verifier | String | 랜덤 문자열 | App to App 요청 시 사용 |
 ** 고정값: 문자 그대로 입력(ex: authorization_code)
 
-- 응답 항목
+#### 응답
 
-| 응답 항목      | 비고                                          |
-|----------------|-----------------------------------------------|
-| access_token   | API 요청 등의 인증에 사용                    |
-| refresh_token  | Access Token 갱신에 사용                      |
-| id_token       | 로그아웃 시 사용                              |
-| scope          | openid (고정값)                               |
-| token_type     | Bearer (고정값)                               |
-| expires_in     | 3000 (Access Token 유효기간(s))               |
+본문:
+
+| 항목            | 타입      | 설명                          | 비고(예시) |
+|---------------|---------|-----------------------------|--------|
+| access_token  | String  | API 요청 등의 인증에 사용  | -      |
+| refresh_token | String  | Access Token 갱신에 사용         | -      |
+| id_token      | String  | 로그아웃 시 사용                   | -      |
+| scope         | String  | `openid`                 | 고정값    |
+| token_type    | String  | `Bearer`                 | 고정값    |
+| expires_in    | Integer | 3000 (Access Token 유효기간(s)) | -      |
 
 
 - 사후 처리
@@ -120,22 +131,27 @@
 
 
 #### 다. 사용자 정보 조회
-- 요청 방식 : GET
-- 요청 URI : /oauth2/userinfo
-- 요청 헤더
+- 요청 방식: `GET`
+- 요청 URI: `/oauth2/userinfo`
 
-| 이름          | 입력값                    | 비고(예시)                 |
-|---------------|---------------------------|---------------------------|
-| Authorization | Bearer [Access Token]     |                           |
+#### 요청
+
+헤더:
+
+| 항목 | 설명 | 비고(예시) |
+| ------------- | ---------------------- | ------ |
+| Authorization | Bearer ${ACCESS_TOKEN} | - |
 
 
-- 응답 항목
+#### 응답
 
-| 이름       | 비고                          |
-|------------|-------------------------------|
-| cn         | 사용자식별값                   |
-| name       | 사용자 이름                    |
-| inst_code  | 사용자가 속한 부서코드 (조직도 정보 획득에 사용 가능) |
+본문:
+
+| 항목       | 타입     | 설명               | 비고(예시)              |
+|----------|--------|------------------|---------------------|
+| cn       | String | 사용자 식별값          | -                   |
+| name     | String | 사용자 이름           | -                   |
+| instCode | String | 사용자가 속한 부서코드 (조직도 정보 획득에 사용 가능) | - |
 
 - 사용자 정보 조회를 로그인 절차에 포함했는데, 로그인 프로세스 외에 사용자 정보 조회가 가능하다.
 
@@ -143,41 +159,55 @@
 ### (2) Token 갱신
 인증을 위한 Access Token의 유효기간은 1시간이다. Access Token이 만료되면 갱신요청을 하여 Token을 갱신
 해야 한다.
-- 요청 방식 : POST
-- 요청 URI : /oauth2/token
-- 요청 파라미터
+- 요청 방식: `POST`
+- 요청 URI: `/oauth2/token`
 
-| 파라미터명       | 입력값                          | 비고(예시)                          |
-|------------------|---------------------------------|-------------------------------------|
-| grant_type       | authorization_code              | 고정값                               |
-| client_id        | 지정한 client_id                | 연계서비스ID                         |
-| client_secret    | 지정한 client_secret            | API키                               |
-| refresh_token    | 저장한 refresh_token            |                                     |
+#### 요청
 
-- 응답 항목
+헤더:
 
-| 응답 항목     | 비고                                         |
-|---------------|----------------------------------------------|
-| access_token  | API 요청 등의 인증에 사용                   |
-| refresh_token | Access Token 갱신에 사용                     |
-| id_token      | 로그아웃 시 사용                             |
-| scope         | openid (고정값)                              |
-| token_type    | Bearer (고정값)                              |
-| expires_in    | 3000 (Access Token 유효기간(s))              |
+| 항목 | 설명 | 비고(예시) |
+| --- | --- | --- |
+| Content-Type | application/x-www-form-urlencoded | - |
+
+본문:
+
+| 항목            | 타입     | 설명                                                                  | 비고(예시)                   |
+|---------------|--------|---------------------------------------------------------------------|--------------------------|
+| grant_type    | String | `refresh_token`                                                 | 고정값                      |
+| client_id     | String | 지정한 client_id | 연계서비스ID ex) LKSV2099010119000196 |
+| client_secret | String | 지정한 client_secret                               | API키                        |
+| refresh_token | String | 저장한 refresh_token                                             | -                        |
+
+#### 응답
+
+본문:
+
+| 항목            | 타입      | 설명                          | 비고(예시) |
+|---------------|---------|-----------------------------|--------|
+| access_token  | String  | API 요청 등의 인증에 사용  | -      |
+| refresh_token | String  | Access Token 갱신에 사용         | -      |
+| id_token      | String  | 로그아웃 시 사용                   | -      |
+| scope         | String  | `openid`으로 고정                 | 고정값    |
+| token_type    | String  | `Bearer`으로 고정                 | 고정값    |
+| expires_in    | Integer | 3000 (Access Token 유효기간(s)) | -      |
 
 - 사후 처리
     - 갱신받은 access_token, refresh_token, id_token 값을 Cookie, Local Storage 등에 저장한다.
 
 ---
 ### (3) 로그아웃
-- 요청 방식 : Redirection URI
-- 요청 URI : /oauth2/connect/logout
-- 요청 파라미터
+- 요청 방식: `GET`
+- 요청 URI: `/oauth2/connect/logout`
 
-| 파라미터명               | 입력값                | 비고(예시)                        |
-|--------------------------|-----------------------|-----------------------------------|
-| id_token_hint            | 저장된 id_token       |                                   |
-| post_logout_redirect_uri | 지정한 redirect_uri   |                                   |
+#### 요청
+
+쿼리 파라미터:
+
+| 항목                       | 설명                                               | 비고(예시)                  |
+|--------------------------|--------------------------------------------------|-------------------------|
+| id_token_hint            | 저장된 id_token                      | -                       |
+| post_logout_redirect_uri | 지정한 redirect_uri | ex) http://testsaas.com |
 
 - 사후 처리
     - 로그아웃에 성공하면 지정한 redirect_uri 페이지로 이동되며, 저장된 access_token, refresh_token, id_token
@@ -359,8 +389,8 @@
     3. OS 버전 체크 후 Host App 호출
 ```
 #### 나. 검증 결과 조회
-- 요청 방식 : POST
-- 요청 URI : /mobile/txCheck
+- 요청 방식: `POST`
+- 요청 URI: `/mobile/txCheck`
 - 요청 파라미터
 
 | 파라미터명         | 입력값    | 비고(예시)                        |
@@ -385,14 +415,16 @@
 ```
 
 #### 다. 로그인
-- 요청 방식 : POST
-- 요청 URI : /login
+- 요청 방식: `POST`
+- 요청 URI: `/login`
 - 요청 파라미터
 
 | 파라미터명    | 입력값   | 비고(예시)           |
 |----------|-------|------------------|
 | username | cn    | 검증 결과 cn값        |
 | password | nonce | authroize 요청 시 사용했던 값 |
+
+---
 
 ## 에러 코드
 
