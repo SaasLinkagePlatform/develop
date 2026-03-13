@@ -1,286 +1,781 @@
-## CODE
+## 행정표준코드
 
-| 요청 URL                                   | 메서드 | 응답 형식 | 설명                                                                                           |
-|--------------------------------------------|--------|-----------|------------------------------------------------------------------------------------------------|
-| /api/gscs/get-allcdspcs                    | GET    | JSON      | 행정표준코드와 연계된 모든 코드종의 종류를 코드종명과 코드종으로 제공함                        |
-| /api/gscs/data/{code_name}                 | GET    | JSON      | 코드종을 통해 해당 코드종에 포함되어 있는 상세 코드 목록을 제공함. {codeName} 값은 행정표준 코드 연계 상황을 참고 |
-| /api/gscs/which-inst                       | GET    | JSON      | 기관 코드 중 차상위기관 코드의 값이 0이고 차수가 1인 최상위기관의 목록을 추출하여 반환함         |
-| /api/gscs/{inst_code}                      | GET    | JSON      | 기관 코드 값을 파라미터로 전달하여, 해당 기관 코드의 모든 하위 노드들을 전부 Hierarchy 구조로 반환함 |
-| /api/gscs/{inst_code}/{depth}              | GET    | JSON      | 기관 코드를 전달하면서, 하위 기관의 파라미터로 전달된 숫자만큼 하위 기관들의 차수(depth)만큼 데이터를 조회 후 Hierarchy 구조로 나타내어 response함 |
-| /api/gscs/fullorgchart/{inst_code}         | GET    | JSON      | 기관 코드의 차수 및 서열과 관계없이, 파라미터로 전달한 해당 기관코드의 전체조직도(fullorgchart)를 response해줌 |
-| /api/gscs/fullorgchart/{inst_code}/{depth} | GET    | JSON      | 기관 코드의 차수 및 서열과 관련하여, 파라미터로 해당 기관 코드를 전달했을 때 함께 전달하는 파라미터의 차수(depth)만큼 전체 조직도(fullorgchart)를 response해줌 |
+### API 목록
+
+| 요청 URL | 메서드 | 응답 형식 | 설명 |
+| --- | --- | --- | --- |
+| `/api/gscs/get-allcdspcs` | GET | JSON | 행정표준코드와 연계된 모든 코드종의 종류를 코드종명과 코드종으로 제공하는 API |
+| `/api/gscs/data/{code_name}` | GET | JSON | 코드종을 통해 해당 코드종에 포함되어 있는 상세 코드 목록을 제공하는 API <br> ※ (`codeName`)으로 전달하는 값은 하단의 **행정표준코드 연계 상황** 참고 |
+| `/api/gscs/which-inst` | GET | JSON | 기관 코드 중 차상위기관 코드의 값이 0이고 차수가 1인 최상위기관의 목록을 제공하는 API |
+| `/api/gscs/{inst_code}` | GET | JSON | 기관 코드 값을 파라미터로 전달하여, 해당 기관 코드의 모든 하위 노드들을 전부 계층 구조로 제공하는 API |
+| `/api/gscs/{inst_code}/{depth}` | GET | JSON | 기관 코드를 전달하고, 하위 기관 파라미터로 전달된 숫자만큼의 depth까지 하위 기관 데이터를 조회한 후 계층 구조로 제공하는 API |
+| `/api/gscs/fullorgchart/{inst_code}` | GET | JSON | 기관 코드의 차수 및 서열과 관계없이, 파라미터로 전달한 해당 기관코드의 전체조직도(fullorgchart)를 제공하는 API |
+| `/api/gscs/fullorgchart/{inst_code}/{depth}` | GET | JSON | 기관 코드의 차수 및 서열과 관련하여, 파라미터로 해당 기관 코드를 전달했을 때 함께 전달하는 파라미터의 depth만큼 전체 조직도(fullorgchart)를 제공하는 API |
 
 ---
-### (1) 행정표준코드 234종 코드종명 조회 API
-행정표준코드관리시스템에서 제공하는 234종의 행정표준코드의 “코드종명”과 해당 코드종명의 “코드종 영문명”
-을 제공한다.
-- 요청 방식 : GET
-- 요청 URI : /api/gscs/get-allcdspcs
-- 요청 헤더
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+### 공통 응답 구조
 
+- 행정표준코드 연계 API의 모든 응답은 아래와 같은 공통 구조를 사용합니다.
+- 실제 응답 데이터는 `data` 필드에 포함되며, 오류가 발생한 경우 `error` 필드에 오류 정보가 반환됩니다.
+- `data` 필드의 세부 구조는 각 API 명세에서 별도로 정의합니다.
+
+##### 응답 항목
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| httpStatusCode | String | HTTP 상태 코드 | - |
+| message | String | 응답 메시지 | - |
+| cnt | number | 조회된 데이터 개수 | `data` 배열의 길이 |
+| data | array | API 요청 결과 데이터 | - |
+| error | object \| null | 오류 발생 시 에러 정보 | 정상 응답 시 `null` |
+
+##### 응답 예시
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "직원 정보 조회",
+  "cnt": 1,
+  "data": [
+    {
+      "instNameAll": "***",
+      "cn": "***",
+      "empName": "***",
+      "position": "",
+      "grade": "",
+      "eml": "",
+      "mbtlnum": "***"
+    }
+  ],
+  "error": null
+}
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/get-allcdspcs
-```  
 
-- 응답 항목
+---
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| korean_nm     | 코드종명 |
-| cd_spcs | 코드종 영문명   |
+### API 명세
+
+### (1) 행정표준코드 234종 코드종명 조회 API
+
+행정표준코드관리시스템에서 제공하는 234종의 행정표준코드의 “코드종명”과 해당 코드종명의 “코드종 영문명”을 제공합니다.
+
+- 요청 방식: `GET`
+- 요청 URI: `/api/gscs/get-allcdspcs`
+
+##### 요청 헤더
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/get-allcdspcs
+```
+
+##### 응답 항목 (배열 구조)
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| data[i][0] | string | 코드종 명 | - |
+| data[i][1] | string | 코드종 영문명 | - |
+
+##### 응답 예시
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "모든 코드종의 종류를 코드종명과 코드종으로 제공",
+  "cnt": 234,
+  "data": [
+    [
+      "기관",
+      "inst"
+    ],
+    [
+      "법정동",
+      "standong"
+    ],
+    [
+      "외국명",
+      "foreignname"
+    ],
+    [
+      "국가자격면허",
+      "qualication"
+    ]
+  ],
+  "error": null
+}
+```
+
 ---
 
 ### (2) 행정표준코드 상세 코드 목록 조회 API
-(영문) 코드종 이름을 매개변수로 받아 코드종에 해당하는 데이터를 반환합니다.
-- 요청 방식 : GET
-- 요청 URI (1) : /api/gscs/data/{code_name}
-  (페이징 정보 미전달시)
-- 요청 URI (2) : /api/gscs/data/{code_name}?page={page}&size={size}
-  (페이징 정보 전달시)
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+(영문) 코드종 이름을 파라미터로 전달하여 코드종에 해당하는 데이터를 반환합니다.
 
-- 요청 파라미터
+- 요청 방식: `GET`
+- 요청 URI (1): `/api/gscs/data/{code_name}`
+- 요청 URI (2): `/api/gscs/data/{code_name}?page={page}&size={size}` (페이징 필요 시)
 
-| 파라미터명    | 입력값       | 비고(예시)            |
-|---------------|--------------|-----------------------|
-| code_name     | 코드종명     | ex. 기관, 직종, 등     |
-| page          | 페이지      | 응답 받을 페이지 수   |
-| size          | 크기         | 응답 받을 데이터 사이즈 |
+##### 요청 헤더
 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 파라미터
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| code_name | string | 코드종명 | (필수) ex. 기관, 직종, 등 |
+| page (선택) | integer | 페이지 | (선택) 페이지 수 |
+| size (선택) | integer | 크기 | (선택) 페이지 당 데이터 사이즈 |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/data/inst
+GET https://saas.go.kr/api/gscs/data/inst?page=1&size=100
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/data/{3. 행정표준코드 연계 상황 中 택1}
-  
-  ※ 예) “기관” 코드 요청 시,
-  https://saas.go.kr/api/gscs/data/inst ●요청 URI (1) 또는
-  https://saas.go.kr/api/gscs/data/inst?page=1&size=100 ●요청 URI (2) 으로 요청
-  페이징 정보를 제공하는 page 및 size 정보는 필수값이 아닌 선택값이며, query string 형식으로 파라미터 값을 전달함
-```  
 
-※ 참고
-기관 코드의 경우, 대량데이터를 Json 데이터로 변환하는 과정에서 많은 시간이 소요될 수 있으므로 API 데이터 테스트 시 Open source API
-https://hoppscotch.io/ 를 사용할 것을 추천함.
+- 참고: 기관 코드의 경우, 대량데이터를 Json 데이터로 변환하는 과정에서 많은 시간이 소요될 수 있으므로 API 데이터 테스트 시 Open source API https://hoppscotch.io/ 를 사용할 것을 권장 드립니다.
 
-- 응답 항목
-  - 가. 페이징 정보를 파라미터로 전달하지 않은 경우
-    
-    | 이름   | 비고                             |
-    |--------|----------------------------------|
-    | data   | 행정표준코드에서 제공하는 데이터들 |
+##### 응답 항목
 
-  - 나. 페이징 정보를 파라미터로 전달하는 경우
-  
-    | 이름     | 비고                                             |
-    |----------|--------------------------------------------------|
-    | pageInfo | 해당 행정표준코드 조회 리스트의 page, lastPage, dataSize 정보 |
-    | data     | 행정표준코드에서 제공하는 데이터들               |
+**가. 페이징 정보를 파라미터로 전달하지 않는 경우**
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| pageInfo | string | 해당 행정표준코드 조회 리스트의 page, lastPage, dataSize 정보 | - |
+| instList / whichList / coSpcList | string | - 코드종: 1.기관인 경우 = instList<br>- 코드종: 2.법정동 ~ 31.포상종류 = whichList<br>- 코드종: 32.혈액형 ~ 나머지 = coSpcList | 하단의 **행정표준코드 연계 상황** 참고 |
+| notice | string | 기본값 (1페이지, 1000건)으로 조회 | - |
+
+**나. 페이징 정보를 파라미터로 전달하는 경우**
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| pageInfo | string | 해당 행정표준코드 조회 리스트의 page, lastPage, dataSize 정보 | - |
+| instList / whichList / coSpcList | string | - 코드종: 1.기관인 경우 = instList<br>- 코드종: 2.법정동 ~ 31.포상종류 = whichList<br>- 코드종: 32.혈액형 ~ 나머지 = coSpcList | 하단의 **행정표준코드 연계 상황** 참고 |
+
+##### 응답 예시
+**(1) /api/gscs/data/subject 로 호출 시**
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "subject 코드종명 목록 제공",
+  "cnt": 2156,
+  "data": {
+    "pageInfo": {
+      "page": 1,
+      "lastPage": 3,
+      "dataSize": 1000
+    },
+    "whichList": [
+      {
+        "cd_value": "10005",
+        "cd_value_mean": "가공",
+        "subjct_abrv_nm": "",
+        "rm": ""
+      },
+      {
+        "cd_value": "10010",
+        "cd_value_mean": "가구디자인",
+        "subjct_abrv_nm": "",
+        "rm": ""
+      }
+    ],
+    "notice": "페이징 정보가 없어 기본값(1페이지, 1000건)으로 조회되었습니다."
+  },
+  "error": null
+}
+```
+
+**(2) /api/gscs/data/subject?page=1&size=2 로 호출 시**
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "subject 코드종명 목록 제공",
+  "cnt": 2156,
+  "data": {
+    "pageInfo": {
+      "page": 1,
+      "lastPage": 1078,
+      "dataSize": 2
+    },
+    "whichList": [
+      {
+        "cd_value": "10005",
+        "cd_value_mean": "가공",
+        "subjct_abrv_nm": "",
+        "rm": ""
+      },
+      {
+        "cd_value": "10010",
+        "cd_value_mean": "가구디자인",
+        "subjct_abrv_nm": "",
+        "rm": ""
+      }
+    ]
+  },
+  "error": null
+}
+```
 
 ---
 
 ### (3) 기관 코드 최상위기관 목록 조회 API
-기관 코드 중 차상위기관 코드의 값이 0이고 차수가 1인 최상위기관의 목록을 추출하여 반환한다.
-- 요청 방식 : GET
-- 요청 URI : /api/gscs/which-inst
-- 요청 헤더
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+기관 코드 중 차상위기관 코드의 값이 0이고 차수가 1인 최상위기관의 목록을 추출하여 반환합니다.
 
+- 요청 방식: `GET`
+- 요청 URI: `/api/gscs/which-inst`
+
+##### 요청 헤더
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/which-inst
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/which-inst
-```  
 
-- 응답 항목
+##### 응답 항목
 
-| 이름              | 비고                |
-|-------------------|---------------------|
-| instCode          | 기관코드            |
-| instNameAll       | 전체 기관명         |
-| instName          | 기관명              |
-| odr               | 차수                |
-| ord               | 서열                |
-| parentInstCode    | 차상위 기관코드     |
-| topInstCode       | 최상위 기관코드     |
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| instCode | string | 기관코드 | - |
+| instNameAll | string | 전체 기관명 | - |
+| instName | string | 기관명 | - |
+| odr | string | 차수 | - |
+| ord | string | 서열 | - |
+| parentInstCode | string | 차상위 기관코드 | - |
+| topInstCode | string | 최상위 기관코드 | - |
+
+##### 응답 예시
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "최상위기관 (219개 기관) 목록 조회",
+  "cnt": 219,
+  "data": [
+    {
+      "instCode": "0000001",
+      "instNameAll": "대통령",
+      "instName": "대통령",
+      "odr": "1",
+      "ord": "001",
+      "parentInstCode": "0000000",
+      "topInstCode": "0000001"
+    },
+    {
+      "instCode": "0000002",
+      "instNameAll": "국무총리",
+      "instName": "국무총리",
+      "odr": "1",
+      "ord": "008",
+      "parentInstCode": "0000000",
+      "topInstCode": "0000002"
+    },
+  ],
+  "error": null
+}
+```
+
 ---
 
 ### (4) 기관 코드 (전체) 하위 노드 조회 API
-기관 코드를 전달하여, 해당 기관의 정보를 포함한 모든 하위 기관의 정보들을 전부 Hierarchy 구조로 나타내어
-response 한다.
-- 요청 방식 : GET
-- 요청 URI : /api/gscs/{inst_code}
-- 요청 헤더
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+기관 코드를 전달하여, 해당 기관의 정보를 포함한 모든 하위 기관의 정보들을 전부 계층 구조로 나타내어 응답합니다.
 
-- 요청 파라미터
+- 요청 방식: `GET`
+- 요청 URI: `/api/gscs/{inst_code}`
 
-| 파라미터명  | 입력값           | 비고(예시)       |
-|-------------|------------------|------------------|
-| inst_code   | 기관코드(부서코드) |                  |
+##### 요청 헤더
 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 파라미터
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| inst_code | string | 기관코드 | - |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/1741000
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/1741823
-```  
 
-- 응답 항목
+##### 응답 항목
 
-| 이름                  | 비고                    |
-|-----------------------|-------------------------|
-| instCode              | 기관코드                |
-| instNameAll           | 전체 기관명             |
-| instName              | 기관명                  |
-| odr                   | 차수                    |
-| ord                   | 서열                    |
-| parentInstCode        | 차상위 기관코드         |
-| topInstCode           | 최상위 기관코드         |
-| childrenOrganizations | 하위기관정보            |
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| instCode | string | 기관코드 | - |
+| instNameAll | string | 전체 기관명 | - |
+| instName | string | 기관명 | - |
+| odr | string | 차수 | - |
+| ord | string | 서열 | - |
+| parentInstCode | string | 차상위 기관코드 | - |
+| topInstCode | string | 최상위 기관코드 | - |
+| childrenOrganizations | string | 하위기관정보 | - |
+
+##### 응답 예시
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "행정안전부 국립과학수사연구원의 모든 하위 기관 조회",
+  "cnt": 49,
+  "data": {
+    "instCode": "1741054",
+    "instNameAll": "행정안전부 국립과학수사연구원",
+    "instName": "국립과학수사연구원",
+    "odr": "2",
+    "ord": "029",
+    "parentInstCode": "1741000",
+    "topInstCode": "1741000",
+    "childrenOrganizations": [
+      {
+        "instCode": "1741124",
+        "instNameAll": "행정안전부 국립과학수사연구원 행정지원과",
+        "instName": "행정지원과",
+        "odr": "3",
+        "ord": "001",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000"
+      },
+      {
+        "instCode": "1741130",
+        "instNameAll": "행정안전부 국립과학수사연구원 법공학부",
+        "instName": "법공학부",
+        "odr": "3",
+        "ord": "006",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000",
+        "childrenOrganizations": [
+          {
+            "instCode": "1741488",
+            "instNameAll": "행정안전부 국립과학수사연구원 법공학부 안전과",
+            "instName": "안전과",
+            "odr": "4",
+            "ord": "001",
+            "parentInstCode": "1741130",
+            "topInstCode": "1741000"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}
+```
 
 ---
 
-### (5) 기관 코드 (차수 전달 된) 하위 노드 조회 API
-기관 코드를 전달하면서, 하위 기관의 파라미터로 전달된 숫자만큼 하위 기관들의 차수. 즉, depth만큼 데이터를
-조회한 후 Hierarchy 구조로 나타내어 response 한다.
-- 요청 방식 : GET
-- 요청 URI : /api/gscs/{inst_code}/{depth}
-- 요청 헤더
+### (5) 기관 코드 (차수 전달된) 하위 노드 조회 API
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+기관 코드를 전달하면, 하위 기관의 파라미터로 전달된 숫자만큼 하위 기관들의 차수, 즉, depth만큼 데이터를 조회한 후 계층 구조로 나타내어 응답합니다.
 
-- 요청 파라미터
+- 요청 방식: `GET`
+- 요청 URI: `/api/gscs/{inst_code}/{depth}`
 
-| 파라미터명   | 입력값    | 비고(예시)   |
-|--------------|-----------|--------------|
-| inst_code    | 기관코드  |              |
-| depth        | 차수      |              |
+##### 요청 헤더
 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 파라미터
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| inst_code | string | 기관코드 | - |
+| depth | string | 차수 | - |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/1741054/2
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/1741823/2
-```  
-- 응답 항목
 
-| 이름                  | 비고                    |
-|-----------------------|-------------------------|
-| instCode              | 기관코드                |
-| instNameAll           | 전체 기관명             |
-| instName              | 기관명                  |
-| odr                   | 차수                    |
-| ord                   | 서열                    |
-| parentInstCode        | 차상위 기관코드         |
-| topInstCode           | 최상위 기관코드         |
-| childrenOrganizations | 하위기관정보            |
+##### 응답 항목
 
-- 응답 항목
-  - 응답 결과에는 해당 기관 코드와 파라미터로 함께 전달한 depth (=차수, json 데이터에서는 odr로 표현됨) 만큼
-  데이터가 조회된다. 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| instCode | string | 기관코드 | - |
+| instNameAll | string | 전체 기관명 | - |
+| instName | string | 기관명 | - |
+| odr | string | 차수 | - |
+| ord | string | 서열 | - |
+| parentInstCode | string | 차상위 기관코드 | - |
+| topInstCode | string | 최상위 기관코드 | - |
+| childrenOrganizations | string | 하위기관정보 | - |
+
+##### 응답 예시
+
+응답 결과에는 해당 기관 코드와 파라미터로 함께 전달한 depth만큼 데이터가 조회됩니다.
+
+**(1) /api/gscs/1741054/2 으로 요청 시**
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "행정안전부 국립과학수사연구원의 하위 기관 조회",
+  "cnt": 13,
+  "data": {
+    "instCode": "1741054",
+    "instNameAll": "행정안전부 국립과학수사연구원",
+    "instName": "국립과학수사연구원",
+    "odr": "2",
+    "ord": "029",
+    "parentInstCode": "1741000",
+    "topInstCode": "1741000",
+    "childrenOrganizations": [
+      {
+        "instCode": "1741124",
+        "instNameAll": "행정안전부 국립과학수사연구원 행정지원과",
+        "instName": "행정지원과",
+        "odr": "3",
+        "ord": "001",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000"
+      },
+      {
+        "instCode": "1741130",
+        "instNameAll": "행정안전부 국립과학수사연구원 법공학부",
+        "instName": "법공학부",
+        "odr": "3",
+        "ord": "006",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000"
+      },
+      {
+        "instCode": "1741136",
+        "instNameAll": "행정안전부 국립과학수사연구원 서울과학수사연구소",
+        "instName": "서울과학수사연구소",
+        "odr": "3",
+        "ord": "007",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000"
+      }
+    ]
+  },
+  "error": null
+}
+```
+
+**(2) /api/gscs/1741054/3 으로 요청 시**
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "행정안전부 국립과학수사연구원의 하위 기관 조회",
+  "cnt": 49,
+  "data": {
+    "instCode": "1741054",
+    "instNameAll": "행정안전부 국립과학수사연구원",
+    "instName": "국립과학수사연구원",
+    "odr": "2",
+    "ord": "029",
+    "parentInstCode": "1741000",
+    "topInstCode": "1741000",
+    "childrenOrganizations": [
+      {
+        "instCode": "1741124",
+        "instNameAll": "행정안전부 국립과학수사연구원 행정지원과",
+        "instName": "행정지원과",
+        "odr": "3",
+        "ord": "001",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000"
+      },
+      {
+        "instCode": "1741130",
+        "instNameAll": "행정안전부 국립과학수사연구원 법공학부",
+        "instName": "법공학부",
+        "odr": "3",
+        "ord": "006",
+        "parentInstCode": "1741054",
+        "topInstCode": "1741000",
+        "childrenOrganizations": [
+          {
+            "instCode": "1741488",
+            "instNameAll": "행정안전부 국립과학수사연구원 법공학부 안전과",
+            "instName": "안전과",
+            "odr": "4",
+            "ord": "001",
+            "parentInstCode": "1741130",
+            "topInstCode": "1741000"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}
+```
 
 ---
+
 ### (6) 기관 코드 (전체) 조직도 조회 API
-기관 코드의 차수(depth) 및 서열과 관계없이, 파라미터로 전달한 해당 기관 코드의 전체 조직도(fullorgchart)를
-response 해준다. 이 경우, 해당 기관 코드의 하위 기관들의 정보뿐만 아니라, 상위 기관 코드들의 정보 또한 역으
-로 전부 조회한다.
-- 요청 방식 : GET
-- 요청 URI : /api/gscs/fullorgchart/{inst_code}
-- 요청 헤더
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+기관 코드의 차수(depth) 및 서열과 관계없이, 파라미터로 전달한 해당 기관 코드의 전체 조직도(fullorgchart)를 응답합니다.
+이 경우, 해당 기관 코드의 하위 기관들의 정보뿐만 아니라, 상위 기관 코드들의 정보 또한 역으로 전부 조회합니다.
 
-- 요청 파라미터
+- 요청 방식: `GET`
+- 요청 URI: `/api/gscs/fullorgchart/{inst_code}`
 
-| 파라미터명  | 입력값           | 비고(예시)       |
-|-------------|------------------|------------------|
-| inst_code   | 기관코드(부서코드) |                  |
+##### 요청 헤더
 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 파라미터
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| inst_code | string | 기관코드 | - |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/fullorgchart/1040000
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/fullorgchart/1741000
-```  
-- 응답 항목
 
-| 이름                  | 비고                    |
-|-----------------------|-------------------------|
-| instCode              | 기관코드                |
-| instNameAll           | 전체 기관명             |
-| instName              | 기관명                  |
-| odr                   | 차수                    |
-| ord                   | 서열                    |
-| parentInstCode        | 차상위 기관코드         |
-| topInstCode           | 최상위 기관코드         |
-| childrenOrganizations | 하위기관정보            |
+##### 응답 항목
 
-- 응답 결과 예시
-  - 해당 기관 코드의 하위 기관들의 정보뿐만아니라, 상위 기관 코드들의 정보도 역으로 전부 조회하므로, 응답 결과
-  에는 파라미터로 전달한 기관 코드의 차상위 기관 코드가 0인 기관이 가장 최상단의 기관 코드로 조회된다. 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| instCode | string | 기관코드 | - |
+| instNameAll | string | 전체 기관명 | - |
+| instName | string | 기관명 | - |
+| odr | string | 차수 | - |
+| ord | string | 서열 | - |
+| parentInstCode | string | 차상위 기관코드 | - |
+| topInstCode | string | 최상위 기관코드 | - |
+| childrenOrganizations | string | 하위기관정보 | - |
+
+##### 응답 예시
+
+해당 기관 코드의 하위 기관들의 정보뿐만 아니라, 상위 기관 코드들의 정보도 역으로 전부 조회하므로, 응답 결과에는 파라미터로 전달한 기관 코드의 차상위기관 코드가 0인 기관이 가장 최상단의 기관 코드로 조회됩니다.
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "감사원의 전체 조직도 조회",
+  "cnt": 131,
+  "data": {
+    "instCode": "1040000",
+    "instNameAll": "감사원",
+    "instName": "감사원",
+    "odr": "1",
+    "ord": "006",
+    "parentInstCode": "0000000",
+    "topInstCode": "1040000",
+    "childrenOrganizations": [
+      {
+        "instCode": "1040005",
+        "instNameAll": "감사원 사무총장",
+        "instName": "사무총장",
+        "odr": "2",
+        "ord": "003",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000"
+      },
+      {
+        "instCode": "1040014",
+        "instNameAll": "감사원 감찰관",
+        "instName": "감찰관",
+        "odr": "2",
+        "ord": "025",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000",
+        "childrenOrganizations": [
+          {
+            "instCode": "1040160",
+            "instNameAll": "감사원 감찰관 감찰담당관",
+            "instName": "감찰담당관",
+            "odr": "3",
+            "ord": "001",
+            "parentInstCode": "1040014",
+            "topInstCode": "1040000"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}
+```
 
 ---
+
 ### (7) 기관 코드 (차수 전달 된) 조직도 조회 API
-기관 코드의 차수 및 서열과 관련하여, 파라미터로 해당 기관 코드를 전달했을 때 함께 전달하는 파라미터의 차수
-(depth)만큼 전체 조직도(fullorgchart)를 response 해준다. 이 경우, 해당 기관 코드의 하위 기관들의 정보뿐만
-아니라, 상위 기관 코드들의 정보 또한 역으로 전부 조회한다.
-- 요청 방식 : GET
-- 요청 URI : /api/gscs/fullorgchart/{inst_code}/{depth}
-- 요청 헤더
 
-| 이름       | 비고                                                                 |
-|------------|----------------------------------------------------------------------|
-| ApiKey     | 통합관리포털에서 확인한 ApiKey 복호화 값 (암호화키를 이용하여 복호화) |
-| LinkSrvcId | 통합관리포털에서 확인한 연계서비스ID (ex: LKSV2099010119000196)      |
+기관 코드의 차수 및 서열과 관련하여, 파라미터로 해당 기관 코드를 전달했을 때 함께 전달하는 파라미터의 차수(depth)만큼 전체 조직도(fullorgchart)를 응답합니다.
+이 경우, 해당 기관 코드의 하위 기관들의 정보뿐만 아니라, 상위 기관 코드들의 정보 또한 역으로 전부 조회합니다.
 
-- 요청 파라미터
+- 요청 방식: `GET`
+- 요청 URI: `/api/gscs/fullorgchart/{inst_code}/{depth}`
 
-| 파라미터명   | 입력값    | 비고(예시)   |
-|--------------|-----------|--------------|
-| inst_code    | 기관코드  |              |
-| depth        | 차수      |              |
+##### 요청 헤더
 
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| ApiKey | string | 통합관리포털에서 확인한 ApiKey 복호화 값 | 암호화키를 이용하여 복호화 |
+| LinkSrvcId | string | 통합관리포털에서 확인한 연계서비스 ID | `LKSV2099010119000196` |
+
+##### 요청 파라미터
+
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| inst_code | string | 기관코드 | - |
+| depth | string | 차수 | - |
+
+##### 요청 URI 예시
+
+```text
+GET https://saas.go.kr/api/gscs/fullorgchart/1040000/3
 ```
-  <요청 URI 예시>
-  https://saas.go.kr/api/gscs/fullorgchart/1741842/3
-```  
-- 응답 항목
 
-| 이름                  | 비고                    |
-|-----------------------|-------------------------|
-| instCode              | 기관코드                |
-| instNameAll           | 전체 기관명             |
-| instName              | 기관명                  |
-| odr                   | 차수                    |
-| ord                   | 서열                    |
-| parentInstCode        | 차상위 기관코드         |
-| topInstCode           | 최상위 기관코드         |
-| childrenOrganizations | 하위기관정보            |
+##### 응답 항목
 
-- 응답 항목
-  - 해당 기관 코드의 하위 기관들의 정보뿐만아니라, 상위 기관 코드들의 정보도 역으로 전부 조회하므로, 응답 결과
-  에는 해당 기관 코드와 파라미터로 함께 전달한 depth(=차수, json 데이터에서는 odr로 표현됨) 만큼 데이터가
-  조회된다.
+| 항목 | 타입 | 설명 | 비고(예시) |
+| --- | --- | --- | --- |
+| instCode | string | 기관코드 | - |
+| instNameAll | string | 전체 기관명 | - |
+| instName | string | 기관명 | - |
+| odr | string | 차수 | - |
+| ord | string | 서열 | - |
+| parentInstCode | string | 차상위 기관코드 | - |
+| topInstCode | string | 최상위 기관코드 | - |
+| childrenOrganizations | string | 하위기관정보 | - |
 
+##### 응답 예시
+
+해당 기관 코드의 하위 기관들의 정보뿐만 아니라, 상위 기관 코드들의 정보도 역으로 전부 조회하므로, 응답 결과에는 해당 기관 코드와 파라미터로 함께 전달한 depth만큼 데이터가 조회됩니다.
+
+**(1) /api/gscs/fullorgchart/1040000/2 으로 요청 시**
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "감사원의 상위 조직 조회",
+  "cnt": 34,
+  "data": {
+    "instCode": "1040000",
+    "instNameAll": "감사원",
+    "instName": "감사원",
+    "odr": "1",
+    "ord": "006",
+    "parentInstCode": "0000000",
+    "topInstCode": "1040000",
+    "childrenOrganizations": [
+      {
+        "instCode": "1040005",
+        "instNameAll": "감사원 사무총장",
+        "instName": "사무총장",
+        "odr": "2",
+        "ord": "003",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000"
+      },
+      {
+        "instCode": "1040014",
+        "instNameAll": "감사원 감찰관",
+        "instName": "감찰관",
+        "odr": "2",
+        "ord": "025",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000"
+      },
+      {
+        "instCode": "1040152",
+        "instNameAll": "감사원 감사교육원",
+        "instName": "감사교육원",
+        "odr": "2",
+        "ord": "030",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000"
+      }
+    ]
+  },
+  "error": null
+}
+```
+
+**(2) /api/gscs/fullorgchart/1040000/3 으로 요청 시**
+
+```json
+{
+  "httpStatusCode": "200 OK",
+  "message": "감사원의 상위 조직 조회",
+  "cnt": 116,
+  "data": {
+    "instCode": "1040000",
+    "instNameAll": "감사원",
+    "instName": "감사원",
+    "odr": "1",
+    "ord": "006",
+    "parentInstCode": "0000000",
+    "topInstCode": "1040000",
+    "childrenOrganizations": [
+      {
+        "instCode": "1040005",
+        "instNameAll": "감사원 사무총장",
+        "instName": "사무총장",
+        "odr": "2",
+        "ord": "003",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000"
+      },
+      {
+        "instCode": "1040014",
+        "instNameAll": "감사원 감찰관",
+        "instName": "감찰관",
+        "odr": "2",
+        "ord": "025",
+        "parentInstCode": "1040000",
+        "topInstCode": "1040000",
+        "childrenOrganizations": [
+          {
+            "instCode": "1040160",
+            "instNameAll": "감사원 감찰관 감찰담당관",
+            "instName": "감찰담당관",
+            "odr": "3",
+            "ord": "001",
+            "parentInstCode": "1040014",
+            "topInstCode": "1040000"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}
+```
 
 ---
-#### [참고] 행정표준코드 연계 상황 [코드종명 분류ID 234종]
+### [참고] 행정표준코드 연계 상황 [코드종명 분류ID 234종]
 
 | 행정표준코드 분류명       | 행정표준코드 분류ID       |
 |--------------------------|---------------------------|
