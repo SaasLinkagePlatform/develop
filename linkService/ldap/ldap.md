@@ -1,4 +1,4 @@
-## LDAP
+## LDAP 연계 API
 
 ### API 목록
 
