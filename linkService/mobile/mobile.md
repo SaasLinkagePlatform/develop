@@ -431,7 +431,7 @@ public func application(
 ##### 요청 헤더
 
 | 파라미터명 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | username | string | `cn` | 검증 결과의 `cn` 값 |
 | password | string | `nonce` | authorize 요청 시 사용했던 값 |
 
