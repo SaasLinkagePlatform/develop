@@ -5,20 +5,21 @@
 - 브라우저에 민간SaaS 로그인이 되어 있으면, 다른 민간 SaaS에서는 로그인이 불필요합니다. (단, 동일 브라우저 내 탭에서만 가능)
 - 이용기관에서 적용하는 정책(지원하는 디바이스, 지원하는 브라우저 등) 에 따라서 모바일 로그인 기능 App To App 이나 Web To App 을 적용할 수 있습니다.
 - 개발용 서버: `https://www.saas.go.kr/auth-stg`
-  - 테스트 공무원증이 있거나 개발 시 사용
+    - 테스트 공무원증이 있거나 개발 시 사용
 - 운영용 서버: `https://www.saas.go.kr/auth`
-  - 테스트 공무원증 사용 불가
+    - 테스트 공무원증 사용 불가
 
 ### API 목록
 
-| 요청 URL | 메서드 | 응답 형식 | 설명 |
-| --- | --- | --- | --- |
-| `/oauth2/authorize` | GET | JSON | 연계 API에게 권한 인증을 요청하는 API |
-| `/oauth2/token` | POST | JSON | 연계 API에 Access Token / Refresh Token을 요청하는 API |
-| `/oauth2/userinfo` | GET | JSON | 로그인한 사용자 정보를 요청하는 API |
-| `/oauth2/connect/logout` | GET | JSON | 로그인한 사용자의 세션을 만료시키는 API |
-| `/mobile/txCheck` | POST | JSON | App to App 검증 완료 여부를 확인하는 API |
-| `/login` | POST | JSON | App to App 검증 후 로그인을 요청하는 API |
+| 요청 URL                   | 메서드  | 응답 형식 | 설명                                             |
+|--------------------------|------|-------|------------------------------------------------|
+| `/oauth2/authorize`      | GET  | JSON  | 연계 API에게 권한 인증을 요청하는 API                       |
+| `/oauth2/token`          | POST | JSON  | 연계 API에 Access Token / Refresh Token을 요청하는 API |
+| `/oauth2/userinfo`       | GET  | JSON  | 로그인한 사용자 정보를 요청하는 API                          |
+| `/oauth2/connect/logout` | GET  | JSON  | 로그인한 사용자의 세션을 만료시키는 API                        |
+| `/mobile/authorize`      | POST | JSON  | App to App 권한 인증을 요청하는 API                     |
+| `/mobile/txCheck`        | POST | JSON  | App to App 검증 완료 여부를 확인하는 API                  |
+| `/login`                 | POST | JSON  | App to App 검증 후 로그인을 요청하는 API                  |
 
 ***[에러코드](#에러-코드)는 문서 최하단에 있습니다.***
 
@@ -35,19 +36,17 @@
 
 ##### 요청 파라미터
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| response_type | string | code | 고정값 |
-| scope | string | openid | 고정값 |
-| client_id | string | 지정한 client_id | 연계서비스 ID (ex: `LKSV2099010119000196`) |
-| redirect_uri | string | 지정한 redirect_uri | ex) `http://testsaas.com/oauth/callback` |
-| state | string | 랜덤 문자열 | - |
-| nonce | string | 랜덤 문자열 | - |
-| web_login | boolean | true / false | 기본 로그인의 경우 `true`, <br> App to App 로그인의 경우 `false` |
-| code_challenge | string | 랜덤 문자열 | `code_verifier`의 해시 값 (App to App 사용 시) |
-| code_challenge_method | string | S256 | 고정값 (App to App 사용 시) |
-
-\*\*고정값: 문자 그대로 입력(ex: code, openid, S256)
+| 항목                    | 타입      | 설명               | 비고(예시)                                             |
+|-----------------------|---------|------------------|----------------------------------------------------|
+| response_type         | string  | code             | 고정값                                                |
+| scope                 | string  | openid           | 고정값                                                |
+| client_id             | string  | 지정한 client_id    | 연계서비스 ID (ex: `LKSV2099010119000196`)              |
+| redirect_uri          | string  | 지정한 redirect_uri | ex) `http://testsaas.com/oauth/callback`           |
+| state                 | string  | 랜덤 문자열           | -                                                  |
+| nonce                 | string  | 랜덤 문자열           | -                                                  |
+| web_login             | boolean | true / false     | 기본 로그인의 경우 `true`, <br> Wep to App 로그인의 경우 `false` |
+| code_challenge        | string  | 랜덤 문자열           | `code_verifier`의 해시 값 (Wep to App 사용 시)            |
+| code_challenge_method | string  | S256             | 고정값 (Wep to App 사용 시)                              |
 
 `redirect_uri`는 통합관리포털에서 이용 신청 시 입력하며, 이후 운영 메뉴(`운영관리 > 연계서비스`)에서 수정 및 추가할 수 있습니다.
 
@@ -89,33 +88,31 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ##### 요청 헤더
 
-| 항목 | 설명 | 비고(예시) |
-| --- | --- | --- |
-| Content-Type | `application/x-www-form-urlencoded` | 고정값 |
+| 항목           | 설명                                  | 비고(예시) |
+|--------------|-------------------------------------|--------|
+| Content-Type | `application/x-www-form-urlencoded` | 고정값    |
 
 ##### 요청 본문
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| grant_type | string | `authorization_code` | 고정값 |
-| client_id | string | 지정한 client_id | 연계서비스 ID (ex: `LKSV2099010119000196`) |
-| client_secret | string | 지정한 client_secret | API 키 |
-| redirect_uri | string | 지정한 redirect_uri | ex) `http://testsaas.com/oauth/callback` |
-| code | string | 발급 받은 code | 토큰 연장 할 땐 사용 안 함 |
-| code_verifier | string | 랜덤 문자열 | App to App 요청 시 사용 |
-
-\*\*고정값: 문자 그대로 입력(ex: authorization_code)
+| 항목            | 타입     | 설명                   | 비고(예시)                                   |
+|---------------|--------|----------------------|------------------------------------------|
+| grant_type    | string | `authorization_code` | 고정값                                      |
+| client_id     | string | 지정한 client_id        | 연계서비스 ID (ex: `LKSV2099010119000196`)    |
+| client_secret | string | 지정한 client_secret    | API 키                                    |
+| redirect_uri  | string | 지정한 redirect_uri     | ex) `http://testsaas.com/oauth/callback` |
+| code          | string | 발급 받은 code           | 토큰 연장 할 땐 사용 안 함                         |
+| code_verifier | string | 랜덤 문자열               | App to App 요청 시 사용                       |
 
 ##### 응답 항목
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| access_token | string | API 요청 인증에 사용 | - |
-| refresh_token | string | Access Token 갱신에 사용 | - |
-| id_token | string | 로그아웃 시 사용 | - |
-| scope | string | `openid` | 고정값 |
-| token_type | string | `Bearer` | 고정값 |
-| expires_in | Integer | Access Token 유효기간(초) | `3000` |
+| 항목            | 타입      | 설명                   | 비고(예시) |
+|---------------|---------|----------------------|--------|
+| access_token  | string  | API 요청 인증에 사용        | -      |
+| refresh_token | string  | Access Token 갱신에 사용  | -      |
+| id_token      | string  | 로그아웃 시 사용            | -      |
+| scope         | string  | `openid`             | 고정값    |
+| token_type    | string  | `Bearer`             | 고정값    |
+| expires_in    | Integer | Access Token 유효기간(초) | `3000` |
 
 ##### 사후 처리
 
@@ -129,17 +126,17 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ##### 요청 헤더
 
-| 항목 | 설명 | 비고(예시) |
-| --- | --- | --- |
-| Authorization | `Bearer ${ACCESS_TOKEN}` | - |
+| 항목            | 설명                       | 비고(예시) |
+|---------------|--------------------------|--------|
+| Authorization | `Bearer ${ACCESS_TOKEN}` | -      |
 
 ##### 응답 항목
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| cn | string | 사용자 식별값 | - |
-| name | string | 사용자 이름 | - |
-| instCode | string | 사용자가 속한 부서코드 | - |
+| 항목       | 타입     | 설명           | 비고(예시) |
+|----------|--------|--------------|--------|
+| cn       | string | 사용자 식별값      | -      |
+| name     | string | 사용자 이름       | -      |
+| instCode | string | 사용자가 속한 부서코드 | -      |
 
 ---
 
@@ -152,31 +149,29 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ##### 요청 헤더
 
-| 항목 | 설명 | 비고(예시) |
-| --- | --- | --- |
-| Content-Type | `application/x-www-form-urlencoded` | - |
+| 항목           | 설명                                  | 비고(예시) |
+|--------------|-------------------------------------|--------|
+| Content-Type | `application/x-www-form-urlencoded` | -      |
 
 ##### 요청 본문
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| grant_type | string | `refresh_token` | 고정값 |
-| client_id | string | 지정한 client_id | 연계서비스 ID <br> ex) LKSV2099010119000196 |
-| client_secret | string | 지정한 client_secret | API 키 |
-| refresh_token | string | 저장한 refresh_token | - |
-
-\*\* 고정값: 문자 그대로 입력(ex: authorization_code)
+| 항목            | 타입     | 설명                | 비고(예시)                                 |
+|---------------|--------|-------------------|----------------------------------------|
+| grant_type    | string | `refresh_token`   | 고정값                                    |
+| client_id     | string | 지정한 client_id     | 연계서비스 ID <br> ex) LKSV2099010119000196 |
+| client_secret | string | 지정한 client_secret | API 키                                  |
+| refresh_token | string | 저장한 refresh_token | -                                      |
 
 ##### 응답 항목
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| access_token | string | API 요청 인증에 사용 | - |
-| refresh_token | string | Access Token 갱신에 사용 | - |
-| id_token | string | 로그아웃 시 사용 | - |
-| scope | string | `openid`로 고정 | 고정값 |
-| token_type | string | `Bearer`로 고정 | 고정값 |
-| expires_in | Integer | 3000 (Access Token 유효기간(s)) | - |
+| 항목            | 타입      | 설명                          | 비고(예시) |
+|---------------|---------|-----------------------------|--------|
+| access_token  | string  | API 요청 인증에 사용               | -      |
+| refresh_token | string  | Access Token 갱신에 사용         | -      |
+| id_token      | string  | 로그아웃 시 사용                   | -      |
+| scope         | string  | `openid`로 고정                | 고정값    |
+| token_type    | string  | `Bearer`로 고정                | 고정값    |
+| expires_in    | Integer | 3000 (Access Token 유효기간(s)) | -      |
 
 ##### 사후 처리
 
@@ -191,9 +186,9 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ##### 요청 파라미터
 
-| 항목 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| id_token_hint | string | 저장된 id_token | - |
+| 항목                       | 타입     | 설명               | 비고(예시)                   |
+|--------------------------|--------|------------------|--------------------------|
+| id_token_hint            | string | 저장된 id_token     | -                        |
 | post_logout_redirect_uri | string | 지정한 redirect_uri | 예: `http://testsaas.com` |
 
 ##### 사후 처리
@@ -204,266 +199,306 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ### (4) App to App
 
-#### 가. 구현 가이드
-
 - 모바일 공무원증 App to App 가이드는 Mobile Web Browser에서 모바일 공무원증 Application 호출하는 방법만 안내합니다.
 - CSS, javascript, Angular, React, Vue.js 등의 browser에서 발생하는 오류는 기술 지원이 어려우므로 양해 부탁드립니다.
+- App to App 흐름은 모바일 앱이 WebView 없이 BMC 앱을 직접 실행하고, 인증 완료 후 authorization code 를 받아 토큰 발급 단계로 연결하는 방식입니다.
+- 실제 연동 시 핵심 순서는 아래와 같습니다.
 
-#### 1) Android
+### 연동 흐름
 
-##### 1. Host App 호출 정보
+> 1. PKCE 값 생성
+>  2. `/auth/mobile/authorize` 호출
+>  3. 응답에서 `nonce`, `qrData`, 세션 쿠키 저장
+>  4. `qrData` 로 BMC 앱 실행 (모바일공무원증앱 호출)
+>  5. `/auth/mobile/txCheck` 를 반복 호출해서 `COMPLETE` 확인
+>  6. `/auth/login` 호출 시 `username=nonce`, `password=nonce` 사용
+>  7. `/auth/login` 응답의 JSON 에서 `code` 추출
+>  8. `/auth/oauth2/token` 호출 시 `code`, 원래의 `code_verifier`, 동일한 `redirect_uri`, 클라이언트 인증 정보 사용
 
-| Client App 설정 정보 | 입력값 |
-| --- | --- |
-| Client App에서 사용할 Scheme 값 | `Bmc` |
-| Client App에서 사용할 Action 값 | `kr.go.id.bmc.VERIFY_VP` |
+### API 운영 환경
 
-##### 2. App to App 연동 Flow
+- 개발/스테이징: `https://www.saas.go.kr/auth-stg`
+- 운영: `https://www.saas.go.kr/auth`
 
-- 로그인 요청 후 응답받은 결과값을 사전 정의된 Scheme를 통해 Host App으로 전달합니다.
-- `appName = barotalk`은 Client App에서 정의된 앱 이름을 의미합니다.
+### API 목록
 
-```java
-// (1) Activity 전역에 런처 클래스 선언
-ActivityResultLauncher<Intent> resultLauncher;
+| 요청 URL              | 메서드  | 응답 형식 | 설명                                                   |
+|---------------------|------|-------|------------------------------------------------------|
+| `/mobile/authorize` | POST | JSON  | App to App 시작 시 `nonce`, `qrData`, 세션을 생성하는 API      |
+| `/mobile/txCheck`   | POST | JSON  | BMC 인증 완료 여부를 확인하는 API                               |
+| `/login`            | POST | JSON  | App to App 인증 후 authorization code 를 JSON으로 반환하는 API |
+| `/oauth2/token`     | POST | JSON  | authorization code 로 토큰 발급을 요청하는 API                 |
 
-// (2) onCreate() 실행 시 런처 등록
-resultLauncher = registerForActivityResult(
-    new ActivityResultContracts.StartActivityForResult(),
-    activityResultCallback);
+### API 명세
 
-// (3) Host App 에서 검증시 사용할 데이타
-Uri uri = Uri.parse("bmc://verify_vp?appName=barotalk
-    &type=VERIFY(고정값)
-    &spDid=did:omn:3eYAoCcxgbVNNTxeSQXeo6Y3MbhQ
-    &serviceCode=spdriver(민간 SaaS 서비스 코드)
-    &callBackUrl=https://www.saas.go.kr/auth/spnoneprofile/verify(고정값으로 전달됨)
-    &nonce=988cef69d625e4db508b6b78151cabf59ad63da386a0d2f2b5e269037478f460
-    &encryptType=2(고정값)"
-);
+####          * PKCE 값 생성
 
-// (4) Host App AndroidManifest.xml 에 정의된 Action 값.
-Intent intent = new Intent("kr.go.id.bmc.VERIFY_VP", uri);
+- 앱은 시작 전에 아래 값을 먼저 생성해야 합니다.
 
-// (5) Host App 호출
-resultLauncher.launch(intent);
+| 항목                    | 타입     | 설명                                 | 비고(예시)                        |
+|-----------------------|--------|------------------------------------|-------------------------------|
+| code_verifier         | string | PKCE 원본 값                          | 이후 `txCheck`, `token` 단계까지 유지 |
+| code_challenge        | string | `BASE64URL(SHA256(code_verifier))` | `authorize` 요청 시 사용           |
+| code_challenge_method | string | `S256`                             | 고정값                           |
+| state                 | string | 랜덤 문자열                             | -                             |
+
+#### (1) 인가 요청
+
+- 요청 방식: `POST`
+- 요청 URI: `/mobile/authorize`
+
+##### 요청 파라미터
+
+| 항목                    | 타입     | 설명                  | 비고(예시) |
+|-----------------------|--------|---------------------|--------|
+| response_type         | string | `code`              | 고정값    |
+| scope                 | string | `openid`            | 고정값    |
+| client_id             | string | 등록된 OAuth2 클라이언트 ID | 필수     |
+| redirect_uri          | string | 등록된 redirect URI    | 필수     |
+| code_challenge        | string | PKCE code challenge | 필수     |
+| code_challenge_method | string | `S256`              | 고정값    |
+| state                 | string | 랜덤 문자열              | -      |
+
+##### 요청 예시
+
+```http
+POST /auth/mobile/authorize
+Content-Type: application/x-www-form-urlencoded
+
+response_type=code
+&client_id=your-client-id
+&redirect_uri=myapp://callback
+&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+&code_challenge_method=S256
+&state=abc123
 ```
 
-- Host App에서 검증 결과를 Client App으로 전달합니다.
+##### 응답 항목
 
-```java
-// 결과 예시: bmc://verify_vp?result=true&code=200&message=success&errorMsg=
-ActivityResultCallback<ActivityResult> activityResultCallback =
-    new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            int resultCode = result.getResultCode();
-            if (resultCode == RESULT_OK) {
-                Intent data = result.getData();
-                if (data != null) {
-                    // (1) Host App 에서 결과값으로 전달한 파라미터
-                    String strResult = data.getData().getQueryParameter("result");
+| 항목                 | 타입     | 설명                                 | 비고(예시)        |
+|--------------------|--------|------------------------------------|---------------|
+| nonce              | string | 이후 로그인 요청에 사용하는 값                  | 필수 저장         |
+| qrData.spDid       | string | BMC 실행용 SP DID                     | -             |
+| qrData.serviceCode | string | BMC 실행용 서비스 코드(발급 받은 Service Code) | -             |
+| qrData.nonce       | string | 서버가 생성한 nonce                      | 서버 응답값 그대로 사용 |
+| qrData.callBackUrl | string | BMC 검증 callback URL                | 서버 응답값 그대로 사용 |
+| qrData.encryptType | string | 암호화 타입                             | 고정값: 2        |
 
-                    // (2) Client App 에서 결과 처리
-                    if ("true".equals(strResult)) {
-                        Log.i("TAG", "success");
-                    } else {
-                        Log.i("TAG", "fail");
-                    }
-                }
-            }
-        }
-    };
-```
+##### 응답 예시
 
-#### (2) iOS
-
-##### 1. `info.plist`에 URL Types 정의
-
-- 유니크한 Identifier값을 설정합니다. URL Schemes에 불리는 앱의 scheme을 설정합니다.
-
-```xml
-<key>CFBundleURLTypes</key>
-<array>
-  <dict>
-    <key>CFBundleURLName</key>
-    <string>유니크한 Identifier 값 설정</string>
-    <key>CFBundleURLSchemes</key>
-    <array>
-      <string>유니크한 scheme 설정(불려질 앱의 이름)</string>
-    </array>
-  </dict>
-</array>
-```
-
-- `canOpenURL` 메소드를 사용하여 앱 호출가능 여부를 체크할 경우
-- `info.plist`에 `LSApplicationQueriesSchemes` 배열에 해당 앱을 부를 앱의 scheme을 추가 canOpenURL을 호출하지 않고 바로 openURL을 사용하여도 무방합니다.
-
-##### 2. 연동 Flow
-
-- 로그인 요청 응답 결과 값을 사전 정의된 Scheme를 통해 Host App으로 전달합니다.
-- 아래 예제의 `barotalk`은 `CFBundleURLSchemes`에 설정한 값으로 변경해야 합니다.
-
-```objc
-// (1) Host App 에서 검증시 사용할 데이터
-NSString *scheme = 
-@"bmc://verify_vp?appName=barotalk"
-@"&type=VERIFY"
-@"&spDid=did:omn:3eYAoCcxgbVNNTxeSQXeo6Y3MbhQ"
-@"&serviceCode=spdriver"
-@"&callBackUrl=https://www.saas.go.kr/auth/spnoneprofile/verify"
-@"&nonce=988cef69d625e4db508b6b78151cabf59ad63da386a0d2f2b5e269037478f460"
-@"&encryptType=2";
-
-// (2) URL 형태로 변환
-NSURL *urlScheme = [[NSURL alloc] initWithString:scheme];
-
-// (3) OS 버전 체크 후 Host App 호출
-if (@available(iOS 10.0, *)) {
-    [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:^(BOOL success) {
-        if (success) { NSLog(@"success"); }
-    }];
-} else {
-    [[UIApplication sharedApplication] openURL:urlScheme];
+```json
+{
+  "nonce": "988cef69d625e4db508b6b78151cabf5...",
+  "qrData": {
+    "spDid": "did:omn:example",
+    "serviceCode": "bmc.service",
+    "nonce": "988cef69d625e4db508b6b78151cabf5...",
+    "callBackUrl": "환경별 서버 설정값",
+    "encryptType": 2
+  }
 }
 ```
 
-```swift
-// (1) Host App 에서 검증시 사용할 데이터
-let scheme = 
-"bmc://verify_vp?appName=barotalk" +
-"&type=VERIFY" +
-"&spDid=did:omn:3eYAoCcxgbVNNTxeSQXeo6Y3MbhQ" +
-"&serviceCode=spdriver" +
-"&callBackUrl=http://1.214.64.23:8081/omniapi/vc/v2/verifyQR" +
-"&nonce=988cef69d625e4db508b6b78151cabf59ad63da386a0d2f2b5e269037478f460" +
-"&encryptType=2"
+##### 후속 처리
 
-// (2) URL 형태로 변환
-let urlScheme = URL.init(string: scheme)
+1. 응답에서 `nonce`, `qrData`, 세션 쿠키를 저장합니다.
+2. 최초에 생성한 `code_verifier`, 요청에 사용한 `redirect_uri` 도 함께 유지합니다.
+3. 서버가 준 `qrData` 로 BMC 앱을 실행합니다.
 
-// (3) OS 버전 체크 후 Host App 호출
-if #available(iOS 10.0, *) {
-    UIApplication.shared.open(urlScheme, options: [:]) { (success) in
-        if success { print("success") }
-    }
-} else {
-    UIApplication.shared.openURL(urlScheme)
-}
+##### 세션 쿠키 참고
+
+| 환경  | Context Path | Cookie Name       | Cookie Path |
+|-----|--------------|-------------------|-------------|
+| stg | `/auth-stg`  | `mgsaas_auth_stg` | `/auth-stg` |
+| prd | `/auth`      | `mgsaas_auth`     | `/`         |
+
+---
+
+#### (2) BMC 실행
+
+- 앱은 `/mobile/authorize` 응답의 `qrData` 를 그대로 사용해 BMC 앱을 실행합니다.
+
+```curl 
+bmc://verify_vp?
+  appName={자사서비스앱이름}&
+  type=VERIFY&
+  spDid={응답받은 spDid}&
+  serviceCode={응답받은 서비스코드}&
+  callBackUrl={지정한 callback URL}&
+  nonce={응답받은 nonce값}&
+  encryptType=2
 ```
 
-- Host App에서 검증 결과를 Client App으로 전달합니다.
-- 이하 예제의 `barotalk`은 `CFBundleURLSchemes`에서 설정한 값으로 변경이 필요합니다.
-
-```objc
-// 결과 예시: barotalk://verify_vp?result=(boolean)&code=(code)&message=(message)&errorMsg=(errorMsg)
-- (BOOL)application:(UIApplication *)app
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-    NSURLComponents *urlComponents =
-        [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-
-    // (1) Host App에서 검증시 사용할 데이터
-    if ([urlComponents.host isEqualToString:@"verify_vp"] &&
-        urlComponents.queryItems != nil &&
-        urlComponents.queryItems.count > 0) {
-        NSArray *queryItems = [urlComponents queryItems];
-        NSMutableDictionary *dict = [NSMutableDictionary new];
-
-        for (NSURLQueryItem *item in queryItems) {
-            [dict setObject:[item value] forKey:[item name]];
-        }
-
-        // (2) URL 형태로 변환
-        // (3) OS 버전 체크 후 Host App 호출
-        if ([[dict valueForKey:@"result"] isEqualToString:@"true"]) {
-            // Success 처리
-        } else {
-            // Fail 처리
-        }
-    }
-}
-```
-
-```swift
-// 결과 예시: barotalk://verify_vp?result=(boolean)&code=(code)&message=(message)&errorMsg=(errorMsg)
-public func application(
-    _ app: UIApplication,
-    open url: URL,
-    options: [UIApplication.OpenURLOptionsKey : Any] = [:]
-) -> Bool {
-    let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-
-    // (1) Host App에서 검증시 사용할 데이터
-    if let host = urlComponents.host,
-       host == "verify_vp",
-       let items = urlComponents.queryItems,
-       items.count > 0 {
-        // (2) URL 형태로 변환
-        // (3) OS 버전 체크 후 Host App 호출
-        if let result = items.first(where: { $0.name == "result" }),
-           result.value == "true" {
-            // Success 처리
-        } else {
-            // Fail 처리
-        }
-    }
-}
-```
-
-#### 나. 검증 결과 조회
+#### (3) 검증 요청
 
 - 요청 방식: `POST`
 - 요청 URI: `/mobile/txCheck`
 
-##### 요청 헤더
+##### 요청 파라미터
 
-| 파라미터명 | 타입 | 입력값 | 비고(예시) |
-| --- | --- | --- | --- |
-| nonce | string | 랜덤 문자열 | authorize 요청 시 사용했던 값 |
-| codeVerifier | string | 랜덤 문자열 | authorize 요청 시 사용했던 값 |
+| 항목           | 타입     | 설명                          | 비고(예시) |
+|--------------|--------|-----------------------------|--------|
+| codeVerifier | string | 최초 생성한 `code_verifier` 원본 값 | 필수     |
 
-#### 다. 로그인
+##### 요청 예시
+
+```http
+POST /auth/mobile/txCheck
+Content-Type: application/x-www-form-urlencoded
+Cookie: mgsaas_auth_stg=...
+
+codeVerifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+```
+
+##### 응답 항목
+
+| 항목             | 타입      | 설명       | 비고(예시)                                    |
+|----------------|---------|----------|-------------------------------------------|
+| result         | boolean | 처리 결과    | -                                         |
+| txCompleteCode | string  | 인증 상태 코드 | `WAITING`, `COMPLETE`, `TIMEOUT`, `ERROR` |
+
+##### 응답 예시
+
+```json
+{
+  "result": true,
+  "txCompleteCode": "WAITING"
+}
+```
+
+##### 후속 처리
+
+- `WAITING`: 계속 폴링
+- `COMPLETE`: 다음 `/login` 진행
+- `TIMEOUT`: 실패 처리
+- `ERROR`: 실패 처리
+
+##### 참고
+
+- `/mobile/authorize` 응답에서 받은 세션 쿠키를 그대로 보내야 합니다.
+- `codeVerifier` 는 최초 PKCE 생성 시의 원본값과 정확히 같아야 합니다.
+
+---
+
+#### (4) 인가 코드 (authorization code) 발급
 
 - 요청 방식: `POST`
 - 요청 URI: `/login`
 
-##### 요청 헤더
+##### 요청 파라미터
 
-| 파라미터명 | 타입 | 설명 | 비고(예시) |
-| --- | --- | --- | --- |
-| username | string | `cn` | 검증 결과의 `cn` 값 |
-| password | string | `nonce` | authorize 요청 시 사용했던 값 |
+| 항목       | 타입     | 설명      | 비고(예시)                     |
+|----------|--------|---------|----------------------------|
+| username | string | `nonce` | `/mobile/authorize` 응답값 사용 |
+| password | string | `nonce` | `/mobile/authorize` 응답값 사용 |
+
+##### 요청 예시
+
+```http
+POST /auth/login
+Content-Type: application/x-www-form-urlencoded
+Cookie: mgsaas_auth_stg=...
+
+username=988cef69d625e4db508b6b78151cabf5...
+&password=988cef69d625e4db508b6b78151cabf5...
+```
+
+##### 응답 항목
+
+| 항목   | 타입     | 설명                 | 비고(예시)           |
+|------|--------|--------------------|------------------|
+| code | string | authorization code | 이후 토큰 발급 단계에서 사용 |
+
+##### 응답 예시
+
+```json
+{
+  "code": "authorization_code_value"
+}
+```
+
+##### 후속 처리
+
+1. `/login` 응답의 JSON 에서 `code` 값을 추출합니다.
+2. 이 값을 저장한 뒤 `/oauth2/token` 단계에 사용합니다.
+
+##### 참고
+
+- 여기서 사용하는 `nonce` 는 `/mobile/authorize` 응답에서 받은 값입니다.
+- 요청시 세션 쿠키를 같이 보내야 합니다.
+
+---
+
+##### (5) 토큰 발급
+
+- 요청 방식: `POST`
+- 요청 URI: `/oauth2/token`
+
+##### 요청 본문
+
+| 항목            | 타입     | 설명                          | 비고(예시)                                   |
+|---------------|--------|-----------------------------|------------------------------------------|
+| grant_type    | string | `authorization_code`        | 고정값                                      |
+| client_id     | string | 지정한 client_id               | 연계서비스 ID (ex: `LKSV2099010119000196`)    |
+| client_secret | string | 지정한 client_secret           | API 키                                    |
+| redirect_uri  | string | 지정한 redirect_uri            | ex) `http://testsaas.com/oauth/callback` |
+| code          | string | 발급 받은 code                  | 토큰 연장 할 땐 사용 안 함                         |
+| code_verifier | string | 최초 생성한 `code_verifier` 원본 값 | 필수                                       |
+
+##### 응답 항목
+
+| 항목            | 타입      | 설명                   | 비고(예시) |
+|---------------|---------|----------------------|--------|
+| access_token  | string  | API 요청 인증에 사용        | -      |
+| refresh_token | string  | Access Token 갱신에 사용  | -      |
+| id_token      | string  | 로그아웃 시 사용            | -      |
+| scope         | string  | `openid`             | 고정값    |
+| token_type    | string  | `Bearer`             | 고정값    |
+| expires_in    | Integer | Access Token 유효기간(초) | `3600` |
+
+---
+
+### 에러 코드 / 확인 포인트
+
+##### `/login` 에서 `code` 가 안 나올 때
+
+- 세션 쿠키가 계속 유지되고 있는지 확인합니다.
+- `username`, `password` 에 `nonce` 를 넣었는지 확인합니다.
+- `nonce` 가 `/mobile/authorize` 응답값과 동일한지 확인합니다.
+- `txCheck` 완료 후 호출했는지 확인합니다.
+
+##### 토큰 발급 단계에서 오류가 날 때
+
+- `/login` 응답의 `code` 를 사용했는지 확인합니다.
+- 최초 생성한 `code_verifier` 와 동일한 값을 사용했는지 확인합니다.
+- `redirect_uri` 가 authorize 요청 때와 동일한지 확인합니다.
+- client 인증 정보가 포함되어 있는지 확인합니다.
+
+##### 사전 확인
+
+- client_id, client_secret, redirect_uri 는 등록된 값이어야 합니다.
+- 잘못된 client_id, client_secret, redirect_uri 로 요청하면 정상 동작하지 않습니다.
+- App to App 흐름에서는 authorize 단계의 세션 쿠키, nonce, code_verifier 연결이 끊기지 않는 것이 중요합니다.
 
 ---
 
 ## 에러 코드
 
-| 코드 | 에러 메시지 | 상태코드 |
-| --- | --- | --- |
-| MP10001 | 시스템 장애로 통신이 원활하지 않습니다 | 500 |
-| MP10002 | 잘못된 요청입니다 | 400 |
-| MP10003 | 요청하신 데이터가 없습니다 | 404 |
-| MP10004 | 등록된 Client ID가 없습니다 | 404 |
-| MP10005 | 등록된 ApiKey가 없습니다 | 404 |
-| MP10006 | 등록된 서비스가 없습니다 | 404 |
-| MP10007 | 지원하지 않는 형식입니다 | 405 |
-| MP20001 | 인증되지 않았습니다 | 401 |
-| MP20002 | 접근 권한이 없습니다 | 403 |
-| MP20003 | 요청에 필요한 항목이나 값이 잘못되었습니다 | 400 |
-| MP20004 | OAuth2 인증 흐름을 통한 접근이 아닙니다 | 401 |
-| MP30001 | 잘못된 토큰 형식입니다 | 400 |
-| MP30002 | 유효하지 않은 토큰입니다 | 401 |
-| MP30003 | 유효하지 않은 API키입니다 | 401 |
-| MP30004 | 유효하지 않은 접근입니다 | 401 |
-| MP30005 | 만료된 인증서 요청입니다 | 401 |
-
-```text
-※ 사전 조사
-- client_id, client_secret, redirect_uri, post_logout_redirect_uri 등은 연계 SaaS DB에 저장됩니다.
-- client_id, client_secret은 이용 신청 승인 이후 통합관리포털에서 발급됩니다.
-  (client_id: 연계서비스 ID, client_secret: API Key)
-- redirect_uri, post_logout_redirect_uri는 통합관리포털에서 이용 신청 시 입력합니다.
-  (여러 개 입력 가능, 이용 신청 승인 후 수정 가능)
-- 잘못된 client_id, client_secret으로 요청하거나 등록되지 않은 redirect_uri를 입력하면 정상적으로 서비스가 제공되지 않을 수 있습니다.
-```
+| 코드      | 에러 메시지                    | 상태코드 |
+|---------|---------------------------|------|
+| MP10001 | 시스템 장애로 통신이 원활하지 않습니다     | 500  |
+| MP10002 | 잘못된 요청입니다                 | 400  |
+| MP10003 | 요청하신 데이터가 없습니다            | 404  |
+| MP10004 | 등록된 Client ID가 없습니다       | 404  |
+| MP10005 | 등록된 ApiKey가 없습니다          | 404  |
+| MP10006 | 등록된 서비스가 없습니다             | 404  |
+| MP10007 | 지원하지 않는 형식입니다             | 405  |
+| MP20001 | 인증되지 않았습니다                | 401  |
+| MP20002 | 접근 권한이 없습니다               | 403  |
+| MP20003 | 요청에 필요한 항목이나 값이 잘못되었습니다   | 400  |
+| MP20004 | OAuth2 인증 흐름을 통한 접근이 아닙니다 | 401  |
+| MP30001 | 잘못된 토큰 형식입니다              | 400  |
+| MP30002 | 유효하지 않은 토큰입니다             | 401  |
+| MP30003 | 유효하지 않은 API키입니다           | 401  |
+| MP30004 | 유효하지 않은 접근입니다             | 401  |
+| MP30005 | 만료된 인증서 요청입니다             | 401  |
