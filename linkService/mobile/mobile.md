@@ -44,9 +44,9 @@
 | redirect_uri          | string  | 지정한 redirect_uri | ex) `http://testsaas.com/oauth/callback`           |
 | state                 | string  | 랜덤 문자열           | -                                                  |
 | nonce                 | string  | 랜덤 문자열           | -                                                  |
-| web_login             | boolean | true / false     | 기본 로그인의 경우 `true`, <br> Wep to App 로그인의 경우 `false` |
-| code_challenge        | string  | 랜덤 문자열           | `code_verifier`의 해시 값 (Wep to App 사용 시)            |
-| code_challenge_method | string  | S256             | 고정값 (Wep to App 사용 시)                              |
+| web_login             | boolean | true / false     | 기본 로그인의 경우 `true`, <br> Web to App 로그인의 경우 `false` |
+| code_challenge        | string  | 랜덤 문자열           | `code_verifier`의 해시 값 (Web to App 사용 시)            |
+| code_challenge_method | string  | S256             | 고정값 (Web to App 사용 시)                              |
 
 `redirect_uri`는 통합관리포털에서 이용 신청 시 입력하며, 이후 운영 메뉴(`운영관리 > 연계서비스`)에서 수정 및 추가할 수 있습니다.
 
@@ -60,9 +60,9 @@ https://www.saas.go.kr/auth/oauth2/authorize?
     redirect_uri=지정한 redirect_uri&
     state=랜덤 문자열&
     nonce=랜덤 문자열&
-    web_login=true&                 *App to App 사용 시 false
-    code_challenge=랜덤 문자열&     *App to App 사용 시
-    code_challenge_method=S256      *App to App 사용 시
+    web_login=true&                 *Web to App 사용 시 false
+    code_challenge=랜덤 문자열&     *Web to App 사용 시
+    code_challenge_method=S256      *Web to App 사용 시
 ```
 
 ##### 응답 Redirection URI 예시
