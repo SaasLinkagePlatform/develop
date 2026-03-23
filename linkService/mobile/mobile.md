@@ -261,10 +261,10 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ##### 요청 예시
 
-```http
-POST /auth/mobile/authorize
+```text
 Content-Type: application/x-www-form-urlencoded
 
+POST /auth/mobile/authorize?
 response_type=code
 &client_id=your-client-id
 &redirect_uri=myapp://callback
@@ -342,11 +342,11 @@ bmc://verify_vp?
 
 ##### 요청 예시
 
-```http
-POST /auth/mobile/txCheck
+```text
 Content-Type: application/x-www-form-urlencoded
 Cookie: mgsaas_auth_stg=...
 
+POST /auth/mobile/txCheck?
 codeVerifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
 ```
 
@@ -394,13 +394,14 @@ codeVerifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
 
 ##### 요청 예시
 
-```http
-POST /auth/login
+```texxt
 Content-Type: application/x-www-form-urlencoded
 Cookie: mgsaas_auth_stg=...
 
+POST /auth/login?
 username=988cef69d625e4db508b6b78151cabf5...
 &password=988cef69d625e4db508b6b78151cabf5...
+
 ```
 
 ##### 응답 항목
