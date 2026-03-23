@@ -206,14 +206,14 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ### 연동 흐름
 
-> 1. PKCE 값 생성
->  2. `/auth/mobile/authorize` 호출
->  3. 응답에서 `nonce`, `qrData`, 세션 쿠키 저장
->  4. `qrData` 로 BMC 앱 실행 (모바일공무원증앱 호출)
->  5. `/auth/mobile/txCheck` 를 반복 호출해서 `COMPLETE` 확인
->  6. `/auth/login` 호출 시 `username=nonce`, `password=nonce` 사용
->  7. `/auth/login` 응답의 JSON 에서 `code` 추출
->  8. `/auth/oauth2/token` 호출 시 `code`, 원래의 `code_verifier`, 동일한 `redirect_uri`, 클라이언트 인증 정보 사용
+1. PKCE 값 생성
+2. `/auth/mobile/authorize` 호출
+3. 응답에서 `nonce`, `qrData`, 세션 쿠키 저장
+4. `qrData` 로 BMC 앱 실행 (모바일공무원증앱 호출)
+5. `/auth/mobile/txCheck` 를 반복 호출해서 `COMPLETE` 확인
+6. `/auth/login` 호출 시 `username=nonce`, `password=nonce` 사용
+7. `/auth/login` 응답의 JSON 에서 `code` 추출
+8. `/auth/oauth2/token` 호출 시 `code`, 원래의 `code_verifier`, 동일한 `redirect_uri`, 클라이언트 인증 정보 사용
 
 ### API 운영 환경
 
