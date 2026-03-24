@@ -92,8 +92,8 @@ Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 - 실패
 
 ```json
+// 등록된 클라이언트 ID가 없을 때
 {
-  // 등록된 클라이언트 ID가 없을 때
   "traceId": "9b7396b60cf7894a",
   "code": "EA10004",
   "message": "등록된 Client ID가 없습니다",
@@ -102,8 +102,8 @@ Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}&state=${STATE}
 ```
 
 ```json
+// 요청 파라미터 값이 부정확할 때
 {
-  // 요청 파라미터 값이 부정확할 때
   "traceId": "57535d1f3a5089c4",
   "code": "EA20003",
   "message": "요청에 필요한 항목이나 값이 잘못되었습니다",
@@ -166,10 +166,10 @@ Content-Type: application/json
 
 ```json
 {
-  "access_token": ${ACCESS_TOKEN},
-  "refresh_token": ${REFRESH_TOKEN},
+  "access_token": "${ACCESS_TOKEN}",
+  "refresh_token": "${REFRESH_TOKEN}",
   "scope": "openid",
-  "id_token": ${ID_TOKEN},
+  "id_token": "${ID_TOKEN}",
   "token_type": "Bearer",
   "expires_in": 3599
 }
@@ -325,8 +325,8 @@ Content-Type: application/json
 - 실패
 
 ```json
+// 요청 파라미터 값이 부정확할 때
 {
-  // 요청 파라미터 값이 부정확할 때
   "traceId": "57535d1f3a5089c4",
   "code": "EA20003",
   "message": "요청에 필요한 항목이나 값이 잘못되었습니다",
