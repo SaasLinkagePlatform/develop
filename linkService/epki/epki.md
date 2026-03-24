@@ -313,10 +313,10 @@ Content-Type: application/json
 
 ```json
 {
-  "access_token": ${ACCESS_TOKEN},
-  "refresh_token": ${REFRESH_TOKEN},
+  "access_token": "${ACCESS_TOKEN}",
+  "refresh_token": "${REFRESH_TOKEN}",
   "scope": "openid",
-  "id_token": ${ID_TOKEN},
+  "id_token": "${ID_TOKEN}",
   "token_type": "Bearer",
   "expires_in": 3599
 }
