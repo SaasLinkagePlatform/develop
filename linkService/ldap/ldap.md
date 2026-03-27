@@ -433,7 +433,7 @@ GET https://saas.go.kr/api/ldls/orgchart/1741000
 ##### 요청 URI 예시
 
 ```text
-GET https://saas.go.kr/api/gscs/fullorgchart/1040000
+GET https://saas.go.kr/api/ldls/fullorgchart/1040000
 ```
 
 ##### 응답 항목
