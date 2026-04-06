@@ -64,7 +64,7 @@ GPKI 연계 로그인은 OAuth 2.0 프로토콜을 통해 서비스되고 있습
 ##### 요청 예시
 
 ```text
-GET https://www.saas.go.kr/gpki/oauth2/authorize?
+GET https://saas.go.kr/gpki/oauth2/authorize?
     client_id=${연계서비스ID}&
     redirect_uri=${REDIRECT_URI}&
     response_type=code&
@@ -343,7 +343,7 @@ Content-Type: application/json
 ##### 요청 예시
 
 ```text
-GET https://www.saas.go.kr/gpki/connect/logout?
+GET https://saas.go.kr/gpki/connect/logout?
     id_token_hint=${ID_TOKEN}&
     post_logout_redirect_uri=${POST_LOGOUT_REDIRECT_URI}
 ```

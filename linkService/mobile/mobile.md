@@ -4,9 +4,9 @@
 
 - 브라우저에 민간SaaS 로그인이 되어 있으면, 다른 민간 SaaS에서는 로그인이 불필요합니다. (단, 동일 브라우저 내 탭에서만 가능)
 - 이용기관에서 적용하는 정책(지원하는 디바이스, 지원하는 브라우저 등) 에 따라서 모바일 로그인 기능 App To App 이나 Web To App 을 적용할 수 있습니다.
-- 개발용 서버: `https://www.saas.go.kr/auth-stg`
+- 개발용 서버: `https://saas.go.kr/auth-stg`
     - 테스트 공무원증이 있거나 개발 시 사용
-- 운영용 서버: `https://www.saas.go.kr/auth`
+- 운영용 서버: `https://saas.go.kr/auth`
     - 테스트 공무원증 사용 불가
 
 ### API 목록
@@ -53,7 +53,7 @@
 ##### 요청 URI 예시
 
 ```text
-https://www.saas.go.kr/auth/oauth2/authorize?
+https://saas.go.kr/auth/oauth2/authorize?
     response_type=code&
     scope=openid&
     client_id=연계서비스ID&
@@ -217,8 +217,8 @@ https://지정한 redirect_uri?code=코드값&state=요청 시 전달한 값
 
 ### API 운영 환경
 
-- 개발/스테이징: `https://www.saas.go.kr/auth-stg`
-- 운영: `https://www.saas.go.kr/auth`
+- 개발/스테이징: `https://saas.go.kr/auth-stg`
+- 운영: `https://saas.go.kr/auth`
 
 ### API 목록
 
